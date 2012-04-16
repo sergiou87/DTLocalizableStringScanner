@@ -15,11 +15,13 @@
 @property (nonatomic, assign) NSStringEncoding inputEncoding;
 @property (nonatomic, retain) NSSet *tablesToSkip;
 @property (nonatomic, retain) NSString *customMacroPrefix;
+@property (nonatomic, assign) BOOL keyIncludesComments;
+@property (nonatomic, retain) NSString *keyIncludesCommentsDelimiter;
 
 - (void)beginProcessingFile:(NSURL *)fileURL;
 
 // returns an array of DTLocalizableStringTables
 // blocks until all enqueued files have been processed
-- (NSArray *)aggregatedStringTables; 
+- (NSArray *)aggregatedStringTables;
 
 @end

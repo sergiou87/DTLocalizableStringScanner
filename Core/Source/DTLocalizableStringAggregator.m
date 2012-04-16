@@ -23,11 +23,11 @@
 {
     NSDictionary *_validMacros;
     NSMutableDictionary *_stringTables;
-    
+
     NSOperationQueue *_processingQueue;
     dispatch_queue_t _tableQueue;
     dispatch_group_t _tableGroup;
-	
+
 	DTLocalizableStringEntryWriteCallback _entryWriteCallback;
 }
 
@@ -37,33 +37,35 @@
 @synthesize inputEncoding = _inputEncoding;
 @synthesize tablesToSkip = _tablesToSkip;
 @synthesize customMacroPrefix = _customMacroPrefix;
+@synthesize keyIncludesComments = _keyIncludesComments;
+@synthesize keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
 
 - (id)init
 {
     self = [super init];
     if (self)
-    {   
+    {
         _tableQueue = dispatch_queue_create("DTLocalizableStringAggregator", 0);
         _tableGroup = dispatch_group_create();
-        
+
         _processingQueue = [[NSOperationQueue alloc] init];
         [_processingQueue setMaxConcurrentOperationCount:10];
-        
+
         _wantsPositionalParameters = YES; // default
         _inputEncoding = NSUTF8StringEncoding; // default
     }
     return self;
 }
 
-- (void)dealloc 
+- (void)dealloc
 {
 	dispatch_release(_tableQueue);
     dispatch_release(_tableGroup);
 }
 
-- (void)setCustomMacroPrefix:(NSString *)customMacroPrefix 
+- (void)setCustomMacroPrefix:(NSString *)customMacroPrefix
 {
-    if (customMacroPrefix != _customMacroPrefix) 
+    if (customMacroPrefix != _customMacroPrefix)
     {
         _customMacroPrefix = customMacroPrefix;
         _validMacros = nil;
@@ -76,9 +78,9 @@
 #define BUNDLE @"bundle"
 #define TABLE @"tableName"
 
-- (NSDictionary *)validMacros 
+- (NSDictionary *)validMacros
 {
-    if (!_validMacros) 
+    if (!_validMacros)
     {
         // we know the allowed formats for NSLocalizedString() macros, so we can hard-code them
         // there's no need to parse this stuff when we know what format things must be
@@ -89,22 +91,22 @@
                                   [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, COMMENT, nil], @"FromTableInBundle",
                                   [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, COMMENT, nil], @"WithDefaultValue",
                                   nil];
-        
+
         NSMutableDictionary *validMacros = [NSMutableDictionary dictionary];
-        for (NSString *prefix in prefixes) 
+        for (NSString *prefix in prefixes)
         {
-            for (NSString *suffix in suffixes) 
+            for (NSString *suffix in suffixes)
             {
                 NSString *macroName = [prefix stringByAppendingString:suffix];
                 NSArray *parameters = [suffixes objectForKey:suffix];
-                
+
                 [validMacros setObject:parameters forKey:macroName];
             }
         }
-        
+
         _validMacros = validMacros;
     }
-    
+
     return _validMacros;
 }
 
@@ -113,32 +115,35 @@
 - (void)beginProcessingFile:(NSURL *)fileURL
 {
     NSDictionary *validMacros = [self validMacros];
-    
+
     DTLocalizableStringScanner *scanner = [[DTLocalizableStringScanner alloc] initWithContentsOfURL:fileURL encoding:_inputEncoding validMacros:validMacros];
-    
-    [scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry) 
+
+    [scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
     {
-        NSString *key = [entry rawKey];
+        entry.keyIncludesComments = _keyIncludesComments;
+        entry.keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
+
+        NSString *key = [entry key];
         NSString *value = [entry rawValue];
         BOOL shouldBeAdded = ([key hasPrefix:QUOTE] && [key hasSuffix:QUOTE]);
-        
-        if (value) 
+
+        if (value)
         {
             shouldBeAdded &= ([value hasPrefix:QUOTE] && [value hasSuffix:QUOTE]);
         }
-        
-        if (shouldBeAdded) 
+
+        if (shouldBeAdded)
         {
             dispatch_group_async(_tableGroup, _tableQueue, ^{
                 [self addEntryToTables:entry];
             });
-        } 
-        else 
+        }
+        else
         {
             NSLog(@"skipping: %@", entry);
         }
     }];
-    
+
     [_processingQueue addOperation:scanner];
 }
 
@@ -149,52 +154,52 @@
     {
         _stringTables = [NSMutableDictionary dictionary];
     }
-    
+
     NSString *tableName = [entry tableName];
-	
+
     BOOL shouldSkip = [_tablesToSkip containsObject:tableName];
-    
+
     if (!shouldSkip)
     {
         // find the string table for this token, or create it
         DTLocalizableStringTable *table = [_stringTables objectForKey:tableName];
-        if (!table) 
+        if (!table)
         {
             // need to create it
 			table = [[DTLocalizableStringTable alloc] initWithName:tableName];
             [_stringTables setObject:table forKey:tableName];
         }
-        
-		if (entry.rawValue) 
+
+		if (entry.rawValue)
         {
 			// ...WithDefaultValue
-			if (_wantsPositionalParameters) 
+			if (_wantsPositionalParameters)
             {
 				entry.rawValue = [entry.rawValue stringByNumberingFormatPlaceholders];
 			}
-			
+
 			[table addEntry:entry];
 		}
-        else 
+        else
         {
 			// all other options use the key and variations thereof
-			
+
 			// support for predicate token splitting
 			NSArray *keyVariants = [entry.rawKey variantsFromPredicateVariations];
-			
+
 			// add all variants
-			for (NSString *oneVariant in keyVariants) 
+			for (NSString *oneVariant in keyVariants)
             {
 				DTLocalizableStringEntry *splitEntry = [entry copy];
-				
+
 				NSString *value = oneVariant;
-				if (_wantsPositionalParameters) 
+				if (_wantsPositionalParameters)
                 {
 					value = [oneVariant stringByNumberingFormatPlaceholders];
 				}
-                
+
 				// adjust key and value of the new entry
-				splitEntry.rawKey = oneVariant;
+				splitEntry.rawKey = entry.key;
 				splitEntry.rawValue = value;
 
 				// add token to this table
@@ -204,12 +209,12 @@
     }
 }
 
-- (NSArray *)aggregatedStringTables 
+- (NSArray *)aggregatedStringTables
 {
     // wait for both of these things to finish
     [_processingQueue waitUntilAllOperationsAreFinished];
     dispatch_group_wait(_tableGroup, DISPATCH_TIME_FOREVER);
-    
+
     return [_stringTables allValues];
 }
 

@@ -12,7 +12,7 @@
 @implementation DTLocalizableStringEntry
 {
 	NSMutableSet *_comments;
-	
+
 	NSArray *_sortedCommentsCache;
     NSString *_cleanedKey;
 }
@@ -21,23 +21,30 @@
 @synthesize rawValue=_rawValue;
 @synthesize tableName=_tableName;
 @synthesize bundle=_bundle;
+@synthesize keyIncludesComments=_keyIncludesComments;
+@synthesize keyIncludesCommentsDelimiter=_keyIncludesCommentsDelimiter;
 
 - (NSString *)description
 {
 	NSMutableString *tmpString = [NSMutableString stringWithFormat:@"<%@ key='%@'", NSStringFromClass([self class]), self.rawKey];
-	
+
 	if (_rawValue)
 	{
 		[tmpString appendFormat:@" value='%@'", _rawValue];
 	}
-	
+
 	if ([_tableName length])
 	{
 		[tmpString appendFormat:@" table='%@'", _tableName];
 	}
-	
+
+        for (NSString *oneComment in _comments)
+        {
+                [tmpString appendFormat:@" comment='%@'", oneComment];
+        }
+
 	[tmpString appendString:@">"];
-	
+
 	return tmpString;
 }
 
@@ -49,24 +56,24 @@
 	newEntry.rawValue = _rawValue;
 	newEntry.tableName = _tableName;
 	newEntry.bundle = _bundle;
-	
+
 	for (NSString *oneComment in _comments)
 	{
 		[newEntry addComment:oneComment];
 	}
-	
+
 	return newEntry;
 }
 
 - (NSComparisonResult)compare:(DTLocalizableStringEntry *)otherEntry
 {
-    return [self.cleanedKey localizedStandardCompare:otherEntry.cleanedKey];
+    return [self.key localizedStandardCompare:otherEntry.key];
 }
 
-- (NSString *)_stringByRecognizingNil:(NSString *)string 
+- (NSString *)_stringByRecognizingNil:(NSString *)string
 {
     NSString *tmp = [string lowercaseString];
-    if ([tmp isEqualToString:@"nil"] || [tmp isEqualToString:@"null"] || [tmp isEqualToString:@"0"]) 
+    if ([tmp isEqualToString:@"nil"] || [tmp isEqualToString:@"null"] || [tmp isEqualToString:@"0"])
     {
         string = nil;
     }
@@ -75,9 +82,9 @@
 
 #pragma mark Properties
 
-- (NSString *)tableName 
+- (NSString *)tableName
 {
-    if ([_tableName length] == 0) 
+    if ([_tableName length] == 0)
     {
         return @"Localizable";
     }
@@ -88,10 +95,10 @@
 {
     tableName = [tableName stringByReplacingSlashEscapes];
     tableName = [self _stringByRecognizingNil:tableName];
-	
+
 	// remove the quotes
 	tableName = [tableName stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-    
+
 	// keep "Localizable" if the tableName is nil or @"";
 	if ([tableName length])
 	{
@@ -111,7 +118,7 @@
 
 	// remove the quotes
 	comment = [comment stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-	
+
 	if (![comment length])
 	{
 		return;
@@ -121,11 +128,11 @@
 	{
 		_comments = [[NSMutableSet alloc] init];
 	}
-	
+
 	if (![_comments containsObject:comment])
 	{
 		[_comments addObject:[comment copy]];
-		
+
 		// invalidates sorted cache
 		_sortedCommentsCache = nil;
 	}
@@ -137,14 +144,14 @@
 	{
 		return nil;
 	}
-	
+
 	if (_sortedCommentsCache)
 	{
 		return _sortedCommentsCache;
 	}
-    
+
     _sortedCommentsCache = [[_comments allObjects] sortedArrayUsingSelector:@selector(compare:)];
-	
+
 	return _sortedCommentsCache;
 }
 
@@ -155,15 +162,37 @@
     }
 }
 
-- (NSString *)cleanedKey 
+- (void)setKeyIncludesComments:(BOOL)keyIncludesComments {
+  if (keyIncludesComments != _keyIncludesComments) {
+    _keyIncludesComments = keyIncludesComments;
+    _cleanedKey = nil;
+  }
+}
+
+- (NSString *)key
 {
-    if (_cleanedKey == nil && _rawKey != nil) {
-        _cleanedKey = [_rawKey stringByReplacingSlashEscapes];
+    if (_keyIncludesComments && _keyIncludesCommentsDelimiter) {
+        NSString *prefix = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
+        NSMutableString *tmpString = [NSMutableString stringWithFormat:@"\"%@", prefix];
+        for (NSString *comment in _comments) {
+            [tmpString appendFormat:@"%@%@", _keyIncludesCommentsDelimiter, comment];
+        }
+        [tmpString appendString:@"\""];
+        return tmpString;
+    } else {
+        return _rawKey;
+    }
+}
+
+- (NSString *)cleanedKey
+{
+    if (_cleanedKey == nil && [self key] != nil) {
+        _cleanedKey = [[self key] stringByReplacingSlashEscapes];
     }
     return _cleanedKey;
 }
 
-- (NSString *)cleanedValue 
+- (NSString *)cleanedValue
 {
     return [[self rawValue] stringByReplacingSlashEscapes];
 }

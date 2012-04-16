@@ -16,44 +16,46 @@ void showUsage(void);
 
 int main (int argc, const char *argv[])
 {
-    @autoreleasepool 
+    @autoreleasepool
     {
 		// default output folder = current working dir
         NSURL *outputFolderURL = nil;
-        
+
         // default output encoding
         NSStringEncoding outputStringEncoding = NSUTF16StringEncoding;
-        
+
         BOOL wantsPositionalParameters = YES;
 		BOOL wantsMultipleCommentWarning = YES;
         BOOL wantsDecodedUnicodeSequences = NO;
+        BOOL keyIncludesComments = NO;
+        NSString *keyIncludesCommentsDelimiter = @"|";
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
-        
+
         // analyze options
         BOOL optionsInvalid = NO;
         NSUInteger i = 1;
         NSMutableArray *files = [NSMutableArray array];
         NSStringEncoding inputStringEncoding = NSUTF8StringEncoding;
-        
+
         while (i<argc)
         {
             if (argv[i][0]!='-')
             {
                 // not a parameter, treat as file name
                 NSString *fileName = [NSString stringWithUTF8String:argv[i]];
-                
+
                 // standardize path
                 fileName = [fileName stringByStandardizingPath];
-                
+
                 NSURL *url = [NSURL fileURLWithPath:fileName];
-                
+
                 if (!url)
                 {
                     optionsInvalid = YES;
                     break;
                 }
-                
+
                 [files addObject:url];
             }
             else if (!strcmp("-noPositionalParameters", argv[i]))
@@ -65,41 +67,41 @@ int main (int argc, const char *argv[])
             {
                 // output folder name
                 i++;
-                
+
                 if (i>=argc)
                 {
                     // output folder name is missing
                     optionsInvalid = YES;
                     break;
                 }
-                
+
                 // output folder
                 NSString *fileName = [NSString stringWithUTF8String:argv[i]];
-                
+
                 // standardize path
                 fileName = [fileName stringByStandardizingPath];
-                
+
                 // check if output folder exists
                 if (![[NSFileManager defaultManager] isWritableFileAtPath:fileName])
                 {
                     printf("Unable to write to %s\n", [fileName UTF8String]);
                     exit(1);
                 }
-                
+
                 outputFolderURL = [NSURL fileURLWithPath:fileName];
             }
             else if (!strcmp("-s", argv[i]))
             {
                 // custom macro prefix
                 i++;
-                
+
                 if (i>=argc)
                 {
                     // prefix is missing
                     optionsInvalid = YES;
                     break;
                 }
-                
+
                 customMacroPrefix = [NSString stringWithUTF8String:argv[i]];
             }
 			else if (!strcmp("-q", argv[i]))
@@ -107,6 +109,20 @@ int main (int argc, const char *argv[])
 				// do not warn if multiple different comments are attached to a token
 				wantsMultipleCommentWarning = NO;
 			}
+            else if (!strcmp("-keyIncludesComments", argv[i]))
+            {
+                keyIncludesComments = YES;
+            }
+            else if (!strcmp("-keyIncludesCommentsDelimiter", argv[i]))
+            {
+                i++;
+                if (i>=argc)
+                {
+                    optionsInvalid = YES;
+                    break;
+                }
+                keyIncludesCommentsDelimiter = [NSString stringWithUTF8String:argv[i]];
+            }
             else if (!strcmp("-u", argv[i]))
             {
                 wantsDecodedUnicodeSequences = YES;
@@ -115,14 +131,14 @@ int main (int argc, const char *argv[])
             {
                 // tables to be ignored
                 i++;
-                
+
                 if (i>=argc)
                 {
                     // table name is missing
                     optionsInvalid = YES;
                     break;
                 }
-                
+
                 NSString *tableName = [NSString stringWithUTF8String:argv[i]];
                 [tablesToSkip addObject:tableName];
             }
@@ -138,65 +154,67 @@ int main (int argc, const char *argv[])
             {
                 inputStringEncoding = NSMacOSRomanStringEncoding;
             }
-            
+
             i++;
         }
-        
+
         // something is wrong
         if (optionsInvalid || ![files count])
         {
             showUsage();
             exit(1);
         }
-        
+
         // create the aggregator
         DTLocalizableStringAggregator *aggregator = [[DTLocalizableStringAggregator alloc] init];
-        
+
         // set the parameters
         aggregator.wantsPositionalParameters = wantsPositionalParameters;
         aggregator.inputEncoding = inputStringEncoding;
         aggregator.customMacroPrefix = customMacroPrefix;
-		
+        aggregator.keyIncludesComments = keyIncludesComments;
+        aggregator.keyIncludesCommentsDelimiter = keyIncludesCommentsDelimiter;
+
         // go, go, go!
         for (NSURL *file in files) {
             [aggregator beginProcessingFile:file];
         }
-        
+
         NSArray *aggregatedTables = [aggregator aggregatedStringTables];
-        
+
         DTLocalizableStringEntryWriteCallback writeCallback = nil;
-        
+
         if (wantsMultipleCommentWarning) {
             writeCallback = ^(DTLocalizableStringEntry *entry) {
 				NSArray *comments = [entry sortedComments];
-				
+
 				if ([comments count] > 1) {
 					NSString *tmpString = [comments componentsJoinedByString:@"\" & \""];
 					printf("Warning: Key \"%s\" used with multiple comments \"%s\"\n", [entry.rawKey UTF8String], [tmpString UTF8String]);
 				}
             };
         }
-		
+
 		// set output dir to current working dir if not set
 		if (!outputFolderURL) {
 			NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
 			outputFolderURL = [NSURL fileURLWithPath:cwd];
 		}
-		
+
 		// output the tables
 		NSError *error = nil;
-        
+
         for (DTLocalizableStringTable *table in aggregatedTables) {
             [table setShouldDecodeUnicodeSequences:wantsDecodedUnicodeSequences];
-            
+
             if (![table writeToFolderAtURL:outputFolderURL encoding:outputStringEncoding error:&error entryWriteCallback:writeCallback]) {
-                
+
                 printf("%s\n", [[error localizedDescription] UTF8String]);
                 exit(1); // exit due to error
             }
         }
     }
-    
+
     return 0;
 }
 
@@ -208,6 +226,7 @@ void showUsage(void)
     //   printf("    -j                       sets the input language to Java.\n");
     //   printf("    -a                       append output to the old strings files.\n");
     printf("    -s substring             substitute 'substring' for NSLocalizedString.\n");
+    printf("    -keyIncludesComments     use 'key|comment|comment...' for the key.\n");
     printf("    -skipTable tablename     skip over the file for 'tablename'.\n");
     printf("    -noPositionalParameters  turns off positional parameter support.\n");
     printf("    -u                       allow unicode characters in the values of strings files.\n");

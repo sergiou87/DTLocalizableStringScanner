@@ -17,8 +17,11 @@
 @property (nonatomic, copy) NSString *tableName;
 @property (nonatomic, copy) NSString *bundle;
 
+@property (nonatomic, readonly) NSString *key;
 @property (nonatomic, readonly) NSString *cleanedKey;
 @property (nonatomic, readonly) NSString *cleanedValue;
+@property (nonatomic, assign) BOOL keyIncludesComments;
+@property (nonatomic, copy) NSString *keyIncludesCommentsDelimiter;
 
 - (void)setComment:(NSString *)comment; // for KVC
 
