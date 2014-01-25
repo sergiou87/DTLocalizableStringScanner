@@ -31,6 +31,21 @@
 	return self;
 }
 
+- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable
+{
+	NSAssert([originalTable.name isEqualToString:_name], @"You should only be merging tables with the same name: %@ != %@", originalTable.name, _name);
+    
+    for (DTLocalizableStringEntry *entry in self.entries)
+    {
+        DTLocalizableStringEntry *originalEntry = originalTable.entryIndexByKey[entry.key];
+        
+        if (originalEntry)
+        {
+            entry.rawValue = originalEntry.rawValue;
+        }
+    }
+}
+
 - (void)addEntry:(DTLocalizableStringEntry *)entry
 {
 	NSAssert([entry.tableName isEqualToString:_name], @"Entry does not belong in this table: %@ != %@", entry.tableName, _name);

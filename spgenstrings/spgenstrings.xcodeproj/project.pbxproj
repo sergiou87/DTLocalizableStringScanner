@@ -77,7 +77,7 @@
 		406503AC18941C9B00EA66D5 /* SPExample.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SPExample.m; path = ../Example/Source/SPExample.m; sourceTree = "<group>"; };
 		55951CFE14BD3C1700E4A63E /* DTLocalizableStringEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLocalizableStringEntry.h; sourceTree = "<group>"; };
 		55951CFF14BD3C1700E4A63E /* DTLocalizableStringEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLocalizableStringEntry.m; sourceTree = "<group>"; };
-		A775233D14ACEF7A0035CDCA /* genstrings2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genstrings2; sourceTree = BUILT_PRODUCTS_DIR; };
+		A775233D14ACEF7A0035CDCA /* spgenstrings */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = spgenstrings; sourceTree = BUILT_PRODUCTS_DIR; };
 		A775234114ACEF7A0035CDCA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A79499AC14C0D35500A8CCDE /* NSPredicateEditor.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NSPredicateEditor.txt; sourceTree = "<group>"; };
 		A79499CE14C3052500A8CCDE /* CustomPrefix.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomPrefix.txt; sourceTree = "<group>"; };
@@ -200,7 +200,7 @@
 		A775233E14ACEF7A0035CDCA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A775233D14ACEF7A0035CDCA /* genstrings2 */,
+				A775233D14ACEF7A0035CDCA /* spgenstrings */,
 				A79AC08814B1A51800489FA3 /* libDTLocalizableStringScanner.a */,
 				A7F65DBE14C03E980092E2EE /* UnitTest.octest */,
 			);
@@ -335,7 +335,7 @@
 			);
 			name = "Command Line Tool";
 			productName = genstrings2;
-			productReference = A775233D14ACEF7A0035CDCA /* genstrings2 */;
+			productReference = A775233D14ACEF7A0035CDCA /* spgenstrings */;
 			productType = "com.apple.product-type.tool";
 		};
 		A79AC08714B1A51800489FA3 /* Static Library */ = {
@@ -554,7 +554,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = genstrings2;
+				PRODUCT_NAME = spgenstrings;
 			};
 			name = Debug;
 		};
@@ -568,7 +568,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = genstrings2;
+				PRODUCT_NAME = spgenstrings;
 			};
 			name = Release;
 		};

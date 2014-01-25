@@ -186,7 +186,6 @@ int main (int argc, const char *argv[])
         DTLocalizableStringAggregator *aggregator = [[DTLocalizableStringAggregator alloc] init];
         
         // set the parameters
-        [aggregator setOriginalStringTables:originalTables];
         aggregator.wantsPositionalParameters = wantsPositionalParameters;
         aggregator.inputEncoding = inputStringEncoding;
         aggregator.customMacroPrefix = customMacroPrefix;
@@ -199,15 +198,36 @@ int main (int argc, const char *argv[])
         }
 
         NSArray *aggregatedTables = [aggregator aggregatedStringTables];
-
+        NSMutableDictionary *unusedOriginalTables = [originalTables mutableCopy];
+        
+        // Merge the aggregated tables with the original
+        for (DTLocalizableStringTable *table in aggregatedTables)
+        {
+            DTLocalizableStringTable *originalTable = unusedOriginalTables[table.name];
+            
+            if (!originalTable) continue;
+            
+            [table mergeWithOriginalTable:originalTable];
+            [unusedOriginalTables removeObjectForKey:originalTable.name];
+        }
+        
         DTLocalizableStringEntryWriteCallback writeCallback = nil;
-
+        NSFileManager *fileManager = [NSFileManager defaultManager];
 		// set output dir to current working dir if not set
 		if (!outputFolderURL) {
-			NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+			NSString *cwd = [fileManager currentDirectoryPath];
 			outputFolderURL = [NSURL fileURLWithPath:cwd];
 		}
 
+        // Delete the unused original tables
+        for (DTLocalizableStringTable *unusedTable in [unusedOriginalTables allValues])
+        {
+            NSString *filePath = [[[outputFolderURL path]
+                                   stringByAppendingPathComponent:unusedTable.name]
+                                  stringByAppendingPathExtension:@"strings"];
+            [fileManager removeItemAtPath:filePath error:nil];
+        }
+        
 		// output the tables
 		NSError *error = nil;
 

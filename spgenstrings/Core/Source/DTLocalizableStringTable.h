@@ -38,6 +38,8 @@ typedef void(^DTLocalizableStringEntryWriteCallback)(DTLocalizableStringEntry *)
  */
 @property (nonatomic, readonly) NSArray *entries;
 
+@property (nonatomic, readonly) NSMutableDictionary *entryIndexByKey;
+
 /**
  @name Creating a String Table
  */
@@ -58,6 +60,7 @@ typedef void(^DTLocalizableStringEntryWriteCallback)(DTLocalizableStringEntry *)
  */
 - (void)addEntry:(DTLocalizableStringEntry *)entry;
 
+- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable;
 
 /**
  @name Creating Output
