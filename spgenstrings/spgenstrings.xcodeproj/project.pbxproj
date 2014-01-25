@@ -24,6 +24,8 @@
 		4065035D1893EFA500EA66D5 /* genstrings2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 4065035A1893EFA500EA66D5 /* genstrings2.1 */; };
 		4065035E1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
 		4065035F1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
+		406503631893F0D700EA66D5 /* SPExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 406503621893F0D700EA66D5 /* SPExample.m */; };
+		406503731893F34700EA66D5 /* SPLocalizedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 406503661893F0E800EA66D5 /* SPLocalizedString.m */; };
 		A775234214ACEF7A0035CDCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A775234114ACEF7A0035CDCA /* Foundation.framework */; };
 		A79499AD14C0D35500A8CCDE /* NSPredicateEditor.txt in Resources */ = {isa = PBXBuildFile; fileRef = A79499AC14C0D35500A8CCDE /* NSPredicateEditor.txt */; };
 		A79499CF14C3052500A8CCDE /* CustomPrefix.txt in Resources */ = {isa = PBXBuildFile; fileRef = A79499CE14C3052500A8CCDE /* CustomPrefix.txt */; };
@@ -72,6 +74,10 @@
 		406503591893EFA500EA66D5 /* genstrings2-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "genstrings2-Prefix.pch"; sourceTree = "<group>"; };
 		4065035A1893EFA500EA66D5 /* genstrings2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = genstrings2.1; sourceTree = "<group>"; };
 		4065035C1893EFA500EA66D5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		406503611893F0D700EA66D5 /* SPExample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPExample.h; sourceTree = "<group>"; };
+		406503621893F0D700EA66D5 /* SPExample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPExample.m; sourceTree = "<group>"; };
+		406503651893F0E800EA66D5 /* SPLocalizedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPLocalizedString.h; sourceTree = "<group>"; };
+		406503661893F0E800EA66D5 /* SPLocalizedString.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SPLocalizedString.m; sourceTree = "<group>"; };
 		55951CFE14BD3C1700E4A63E /* DTLocalizableStringEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLocalizableStringEntry.h; sourceTree = "<group>"; };
 		55951CFF14BD3C1700E4A63E /* DTLocalizableStringEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLocalizableStringEntry.m; sourceTree = "<group>"; };
 		A775233D14ACEF7A0035CDCA /* genstrings2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genstrings2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,8 +172,19 @@
 		406503601893EFB500EA66D5 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				406503611893F0D700EA66D5 /* SPExample.h */,
+				406503621893F0D700EA66D5 /* SPExample.m */,
 			);
 			path = Demo;
+			sourceTree = "<group>";
+		};
+		406503641893F0E800EA66D5 /* SPLocalizedString */ = {
+			isa = PBXGroup;
+			children = (
+				406503651893F0E800EA66D5 /* SPLocalizedString.h */,
+				406503661893F0E800EA66D5 /* SPLocalizedString.m */,
+			);
+			path = SPLocalizedString;
 			sourceTree = "<group>";
 		};
 		A775233214ACEF790035CDCA = {
@@ -181,6 +198,7 @@
 				A775234014ACEF7A0035CDCA /* Frameworks */,
 				A775233E14ACEF7A0035CDCA /* Products */,
 				406503601893EFB500EA66D5 /* Demo */,
+				406503641893F0E800EA66D5 /* SPLocalizedString */,
 			);
 			sourceTree = "<group>";
 		};
@@ -446,6 +464,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4065035E1893EFA500EA66D5 /* main.m in Sources */,
+				406503631893F0D700EA66D5 /* SPExample.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,6 +472,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				406503731893F34700EA66D5 /* SPLocalizedString.m in Sources */,
 				A79AC09F14B1A99E00489FA3 /* DTLocalizableStringAggregator.m in Sources */,
 				A79AC0A614B4A35800489FA3 /* DTLocalizableStringScanner.m in Sources */,
 				A79AC0A814B4A35800489FA3 /* NSString+DTLocalizableStringScanner.m in Sources */,
