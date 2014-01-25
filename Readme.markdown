@@ -24,7 +24,7 @@ Let's face the truth: ```genstrings``` and the key-based NSLocalizedString with 
 * A key-per-context approach forces you to provide default values for your localized strings or create a strings file during the development cycle.
 * It's a closed system: you cannot alter the way these two tools work together because they're not open source. If you don't like SPLocalizedString, fork it and make pull requests or build your own tools :)
 
-## Install
+## Install SPLocalizedString
 
 1. **Using CocoaPods**
 
@@ -101,6 +101,16 @@ If you look closely, for one key and context you need 2 strings: one when you ha
 "(Number of followers label##one)You have %d followers." = "You have just one follower.";
 "(Number of followers label##other)You have %d followers." = "You have %d followers.";
 ```
+
+## Install spgenstrings
+
+1. Open the spgenstrings.xcodeproj project with Xcode
+2. Click on _Product > Archive_
+3. In the _Organizer > Archives_, you'll se the list of archives of spgenstrings. Right-click the most recent one and select _Show in Finder_.
+4. Right-click on the xcarchive file and click on _Show Package Contents_.
+5. Finally go into _Products/usr/local/bin_ and there you'll find the ```spgenstrings``` executable file.
+
+Place that file wherever you need it :)
 
 ## Usage of spgenstrings
 

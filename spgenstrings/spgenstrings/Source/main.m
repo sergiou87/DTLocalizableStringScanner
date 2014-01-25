@@ -174,6 +174,13 @@ int main (int argc, const char *argv[])
             exit(1);
         }
 
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+		// set output dir to current working dir if not set
+		if (!outputFolderURL) {
+			NSString *cwd = [fileManager currentDirectoryPath];
+			outputFolderURL = [NSURL fileURLWithPath:cwd];
+		}
+
         // Parse existing files
         NSArray *stringsFiles = stringsFilesInDirectory(outputFolderURL);
         NSMutableDictionary *originalTables = [NSMutableDictionary dictionary];
@@ -222,12 +229,6 @@ int main (int argc, const char *argv[])
         }
         
         DTLocalizableStringEntryWriteCallback writeCallback = nil;
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-		// set output dir to current working dir if not set
-		if (!outputFolderURL) {
-			NSString *cwd = [fileManager currentDirectoryPath];
-			outputFolderURL = [NSURL fileURLWithPath:cwd];
-		}
 
         // Delete the unused original tables
         if (deleteUnusedTables)
