@@ -112,6 +112,11 @@
 	return _validMacros;
 }
 
+- (void)setOriginalStringTables:(NSDictionary *)stringTables
+{
+    _stringTables = [stringTables mutableCopy];
+}
+
 - (void)beginProcessingFile:(NSURL *)fileURL
 {
 	NSDictionary *validMacros = [self validMacros];

@@ -7,12 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "DTLocalizableStringsParser.h"
 #import "DTLocalizableStringScanner.h"
 #import "DTLocalizableStringAggregator.h"
 #import "DTLocalizableStringEntry.h"
 #import "DTLocalizableStringTable.h"
 
 void showUsage(void);
+NSArray *stringsFilesInDirectory(NSURL *directory);
 
 int main (int argc, const char *argv[])
 {
@@ -161,16 +164,35 @@ int main (int argc, const char *argv[])
             exit(1);
         }
 
+        // Parse existing files
+        NSArray *stringsFiles = stringsFilesInDirectory(outputFolderURL);
+        NSMutableDictionary *originalTables = [NSMutableDictionary dictionary];
+        
+        for (NSURL *file in stringsFiles)
+        {
+            DTLocalizableStringsParser *parser = [[DTLocalizableStringsParser alloc] initWithFileURL:file];
+            DTLocalizableStringTable *table = [parser parse];
+            
+            if (!table)
+            {
+                printf("Error parsing %s: %s", [[file lastPathComponent] UTF8String], [[parser.parseError localizedDescription] UTF8String]);
+                exit(1);
+            }
+            
+            [originalTables setObject:table forKey:table.name];
+        }
+        
         // create the aggregator
         DTLocalizableStringAggregator *aggregator = [[DTLocalizableStringAggregator alloc] init];
-
+        
         // set the parameters
+        [aggregator setOriginalStringTables:originalTables];
         aggregator.wantsPositionalParameters = wantsPositionalParameters;
         aggregator.inputEncoding = inputStringEncoding;
         aggregator.customMacroPrefix = customMacroPrefix;
         aggregator.tablesToSkip = tablesToSkip;
         aggregator.defaultTableName = defaultTableName;
-		
+
         // go, go, go!
         for (NSURL *file in files) {
             [aggregator beginProcessingFile:file];
@@ -201,6 +223,17 @@ int main (int argc, const char *argv[])
     }
 
     return 0;
+}
+
+NSArray *stringsFilesInDirectory(NSURL *directory)
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSArray *dirContents = [fm contentsOfDirectoryAtURL:directory
+                             includingPropertiesForKeys:@[]
+                                                options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                  error:nil];
+    NSPredicate *fltr = [NSPredicate predicateWithFormat:@"pathExtension='strings'"];
+    return [dirContents filteredArrayUsingPredicate:fltr];
 }
 
 

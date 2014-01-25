@@ -46,6 +46,7 @@
  */
 @property (nonatomic, retain) NSString *defaultTableName;
 
+- (void)setOriginalStringTables:(NSDictionary *)stringTables;
 
 /**
  @name Scanning Files

@@ -552,7 +552,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "spgenstrings/genstrings2-Prefix.pch";
+				GCC_PREFIX_HEADER = "spgenstrings/spgenstrings-Prefix.pch";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -566,7 +566,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "spgenstrings/genstrings2-Prefix.pch";
+				GCC_PREFIX_HEADER = "spgenstrings/spgenstrings-Prefix.pch";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

@@ -8,6 +8,8 @@
 
 #import "DTLocalizableStringsParser.h"
 #import "NSString+DTLocalizableStringScanner.h"
+#import "DTLocalizableStringTable.h"
+#import "DTLocalizableStringEntry.h"
 
 NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsParser";
 
@@ -15,8 +17,6 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
 {
     NSURL *_URL;
     NSError *_parseError;
-    
-    __unsafe_unretained id <DTLocalizableStringsParserDelegate> _delegate;
     
     // lookup bitmask what delegate methods are implemented
 	struct
@@ -51,11 +51,6 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
 - (void)_reportError:(NSError *)error
 {
     _parseError = error;
-    
-    if (_delegateFlags.delegateSupportsError)
-    {
-        [_delegate parser:self parseErrorOccurred:error];
-    }
 }
 
 - (void)_reportErrorMessage:(NSString *)message
@@ -259,12 +254,10 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
     return string;
 }
 
-- (BOOL)parse
+- (DTLocalizableStringTable *)parse
 {
-    if (_delegateFlags.delegateSupportsDocumentStart)
-    {
-        [_delegate parserDidStartDocument:self];
-    }
+    NSString *tableName = [[_URL lastPathComponent] stringByDeletingPathExtension];
+    DTLocalizableStringTable *table = [[DTLocalizableStringTable alloc] initWithName:tableName];
 
     NSError *error;
     NSString *fileContents = [NSString stringWithContentsOfURL:_URL usedEncoding:NULL error:&error];
@@ -272,7 +265,7 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
     if (!fileContents)
     {
         [self _reportError:error];
-        return NO;
+        return nil;
     }
     
     // get characters from the string
@@ -296,16 +289,13 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
             
             if (comment)
             {
-                if (_delegateFlags.delegateSupportsComment)
-                {
-                    [_delegate parser:self foundComment:comment];
-                }
+                // Ignore comments
             }
             else
             {                
                 [self _reportErrorMessage:@"Invalid Comment"];
                 
-                return NO;
+                return nil;
             }
             
             // ignore whitespace after comment
@@ -327,14 +317,14 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
             {
                 [self _reportErrorMessage:@"Invalid Key"];
                 
-                return NO;
+                return nil;
             }
         }
         else
         {
             [self _reportErrorMessage:@"Unexptected Character"];
             
-            return NO;
+            return nil;
         }
         
         // ignore whitespace
@@ -350,7 +340,7 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
         {
             [self _reportErrorMessage:@"Missing equal sign"];
             
-            return NO;
+            return nil;
         }
         
         // ignore whitespace
@@ -360,10 +350,11 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
         
         if (value)
         {
-            if (_delegateFlags.delegateSupportsKeyValue)
-            {
-                [_delegate parser:self foundKey:[_currentKey stringByReplacingSlashEscapes] value:[value stringByReplacingSlashEscapes]];
-            }
+            DTLocalizableStringEntry *entry = [[DTLocalizableStringEntry alloc] init];
+            entry.rawKey = [_currentKey stringByReplacingSlashEscapes];
+            entry.rawValue = [value stringByReplacingSlashEscapes];
+            entry.tableName = tableName;
+            [table addEntry:entry];
             
             _currentKey = nil;
         }
@@ -371,7 +362,7 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
         {
             [self _reportErrorMessage:@"Invalid Value"];
             
-            return NO;
+            return nil;
         }
         
         // ignore whitespace
@@ -387,19 +378,14 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
         {
             [self _reportErrorMessage:@"Missing semi-colon"];
             
-            return NO;
+            return nil;
         }
         
         // ignore whitespace
         [self _scanWhitespace];
     }
     
-    if (_delegateFlags.delegateSupportsDocumentEnd)
-    {
-        [_delegate parserDidEndDocument:self];
-    }
-    
-    return YES;
+    return table;
 }
 
 
@@ -611,24 +597,6 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
  
  */
 
-#pragma mark - Properties
-
-- (void)setDelegate:(id<DTLocalizableStringsParserDelegate>)delegate
-{
-    if (_delegate != delegate)
-    {
-        _delegate = delegate;
-    
-        _delegateFlags.delegateSupportsDocumentStart = [_delegate respondsToSelector:@selector(parserDidStartDocument)];
-        _delegateFlags.delegateSupportsDocumentEnd = [_delegate respondsToSelector:@selector(parserDidEndDocument)];
-        _delegateFlags.delegateSupportsError = [_delegate respondsToSelector:@selector(parser:parseErrorOccurred:)];
-    
-        _delegateFlags.delegateSupportsComment = [_delegate respondsToSelector:@selector(parser:foundComment:)];
-        _delegateFlags.delegateSupportsKeyValue = [_delegate respondsToSelector:@selector(parser:foundKey:value:)];
-    }
-}
-
-@synthesize delegate = _delegate;
 @synthesize parseError = _parseError;
 
 @end
