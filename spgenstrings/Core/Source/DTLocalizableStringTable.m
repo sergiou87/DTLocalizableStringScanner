@@ -31,9 +31,11 @@
 	return self;
 }
 
-- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable
+- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable deleteUnusedEntries:(BOOL)deleteUnusedEntries
 {
 	NSAssert([originalTable.name isEqualToString:_name], @"You should only be merging tables with the same name: %@ != %@", originalTable.name, _name);
+    
+    NSMutableDictionary *unusedOriginalEntries = [originalTable.entryIndexByKey mutableCopy];
     
     for (DTLocalizableStringEntry *entry in self.entries)
     {
@@ -42,6 +44,15 @@
         if (originalEntry)
         {
             entry.rawValue = originalEntry.rawValue;
+            [unusedOriginalEntries removeObjectForKey:originalEntry.key];
+        }
+    }
+    
+    if (!deleteUnusedEntries)
+    {
+        for (DTLocalizableStringEntry *entry in [unusedOriginalEntries allValues])
+        {
+            [self addEntry:entry];
         }
     }
 }

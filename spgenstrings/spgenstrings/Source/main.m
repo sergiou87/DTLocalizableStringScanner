@@ -32,7 +32,9 @@ int main (int argc, const char *argv[])
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
         NSString *defaultTableName = nil;
-        
+        BOOL deleteUnusedEntries = NO;
+        BOOL deleteUnusedTables = NO;
+
         // analyze options
         BOOL optionsInvalid = NO;
         NSUInteger i = 1;
@@ -108,6 +110,14 @@ int main (int argc, const char *argv[])
             else if (!strcmp("-u", argv[i]))
             {
                 wantsDecodedUnicodeSequences = YES;
+            }
+            else if (!strcmp("-deleteUnusedEntries", argv[i]))
+            {
+                deleteUnusedEntries = YES;
+            }
+            else if (!strcmp("-deleteUnusedTables", argv[i]))
+            {
+                deleteUnusedTables = YES;
             }
             else if (!strcmp("-skipTable", argv[i]))
             {
@@ -207,7 +217,7 @@ int main (int argc, const char *argv[])
             
             if (!originalTable) continue;
             
-            [table mergeWithOriginalTable:originalTable];
+            [table mergeWithOriginalTable:originalTable deleteUnusedEntries:deleteUnusedEntries];
             [unusedOriginalTables removeObjectForKey:originalTable.name];
         }
         
@@ -220,12 +230,15 @@ int main (int argc, const char *argv[])
 		}
 
         // Delete the unused original tables
-        for (DTLocalizableStringTable *unusedTable in [unusedOriginalTables allValues])
+        if (deleteUnusedTables)
         {
-            NSString *filePath = [[[outputFolderURL path]
-                                   stringByAppendingPathComponent:unusedTable.name]
-                                  stringByAppendingPathExtension:@"strings"];
-            [fileManager removeItemAtPath:filePath error:nil];
+            for (DTLocalizableStringTable *unusedTable in [unusedOriginalTables allValues])
+            {
+                NSString *filePath = [[[outputFolderURL path]
+                                       stringByAppendingPathComponent:unusedTable.name]
+                                      stringByAppendingPathExtension:@"strings"];
+                [fileManager removeItemAtPath:filePath error:nil];
+            }
         }
         
 		// output the tables
@@ -264,6 +277,8 @@ void showUsage(void)
     printf("    -s substring             substitute 'substring' for SPLocalizedString.\n");
     printf("    -skipTable tablename     skip over the file for 'tablename'.\n");
     printf("    -noPositionalParameters  turns off positional parameter support.\n");
+    printf("    -deleteUnusedEntries     deletes the entries that are not used anymore.\n");
+    printf("    -deleteUnusedTables      deletes the tables that are not used anymore.\n");
     printf("    -u                       allow unicode characters in the values of strings files.\n");
     printf("    -macRoman                read files as MacRoman not UTF-8.\n");
     printf("    -q                       turns off multiple key/value pairs warning.\n");

@@ -60,7 +60,7 @@ typedef void(^DTLocalizableStringEntryWriteCallback)(DTLocalizableStringEntry *)
  */
 - (void)addEntry:(DTLocalizableStringEntry *)entry;
 
-- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable;
+- (void)mergeWithOriginalTable:(DTLocalizableStringTable *)originalTable deleteUnusedEntries:(BOOL)deleteUnusedEntries;
 
 /**
  @name Creating Output
