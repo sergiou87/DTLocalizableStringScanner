@@ -21,13 +21,13 @@
 
 @implementation DTLocalizableStringAggregator
 {
-    NSDictionary *_validMacros;
-    NSMutableDictionary *_stringTables;
-
-    NSOperationQueue *_processingQueue;
-    dispatch_queue_t _tableQueue;
-    dispatch_group_t _tableGroup;
-
+	NSDictionary *_validMacros;
+	NSMutableDictionary *_stringTables;
+	
+	NSOperationQueue *_processingQueue;
+	dispatch_queue_t _tableQueue;
+	dispatch_group_t _tableGroup;
+	
 	DTLocalizableStringEntryWriteCallback _entryWriteCallback;
 }
 
@@ -40,36 +40,38 @@
 @synthesize keyIncludesComments = _keyIncludesComments;
 @synthesize keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
 
+@synthesize defaultTableName = _defaultTableName;
+
 - (id)init
 {
-    self = [super init];
-    if (self)
-    {
-        _tableQueue = dispatch_queue_create("DTLocalizableStringAggregator", 0);
-        _tableGroup = dispatch_group_create();
-
-        _processingQueue = [[NSOperationQueue alloc] init];
-        [_processingQueue setMaxConcurrentOperationCount:10];
-
-        _wantsPositionalParameters = YES; // default
-        _inputEncoding = NSUTF8StringEncoding; // default
-    }
-    return self;
+	self = [super init];
+	if (self)
+	{
+		_tableQueue = dispatch_queue_create("DTLocalizableStringAggregator", 0);
+		_tableGroup = dispatch_group_create();
+		
+		_processingQueue = [[NSOperationQueue alloc] init];
+		[_processingQueue setMaxConcurrentOperationCount:10];
+		
+		_wantsPositionalParameters = YES; // default
+		_inputEncoding = NSUTF8StringEncoding; // default
+	}
+	return self;
 }
 
 - (void)dealloc
 {
 	dispatch_release(_tableQueue);
-    dispatch_release(_tableGroup);
+	dispatch_release(_tableGroup);
 }
 
 - (void)setCustomMacroPrefix:(NSString *)customMacroPrefix
 {
-    if (customMacroPrefix != _customMacroPrefix)
-    {
-        _customMacroPrefix = customMacroPrefix;
-        _validMacros = nil;
-    }
+	if (customMacroPrefix != _customMacroPrefix)
+	{
+		_customMacroPrefix = customMacroPrefix;
+		_validMacros = nil;
+	}
 }
 
 #define KEY @"rawKey"
@@ -80,108 +82,114 @@
 
 - (NSDictionary *)validMacros
 {
-    if (!_validMacros)
-    {
-        // we know the allowed formats for NSLocalizedString() macros, so we can hard-code them
-        // there's no need to parse this stuff when we know what format things must be
-        NSArray *prefixes = [NSArray arrayWithObjects:@"NSLocalizedString", @"CFCopyLocalizedString", _customMacroPrefix, nil];
-        NSDictionary *suffixes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  [NSArray arrayWithObjects:KEY, COMMENT, nil], @"",
-                                  [NSArray arrayWithObjects:KEY, TABLE, COMMENT, nil], @"FromTable",
-                                  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, COMMENT, nil], @"FromTableInBundle",
-                                  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, COMMENT, nil], @"WithDefaultValue",
-                                  nil];
-
-        NSMutableDictionary *validMacros = [NSMutableDictionary dictionary];
-        for (NSString *prefix in prefixes)
-        {
-            for (NSString *suffix in suffixes)
-            {
-                NSString *macroName = [prefix stringByAppendingString:suffix];
-                NSArray *parameters = [suffixes objectForKey:suffix];
-
-                [validMacros setObject:parameters forKey:macroName];
-            }
-        }
-
-        _validMacros = validMacros;
-    }
-
-    return _validMacros;
+	if (!_validMacros)
+	{
+		// we know the allowed formats for NSLocalizedString() macros, so we can hard-code them
+		// there's no need to parse this stuff when we know what format things must be
+		NSArray *prefixes = [NSArray arrayWithObjects:@"NSLocalizedString", @"CFCopyLocalizedString", _customMacroPrefix, nil];
+		NSDictionary *suffixes = [NSDictionary dictionaryWithObjectsAndKeys:
+										  [NSArray arrayWithObjects:KEY, COMMENT, nil], @"",
+										  [NSArray arrayWithObjects:KEY, TABLE, COMMENT, nil], @"FromTable",
+										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, COMMENT, nil], @"FromTableInBundle",
+										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, COMMENT, nil], @"WithDefaultValue",
+										  nil];
+		
+		NSMutableDictionary *validMacros = [NSMutableDictionary dictionary];
+		for (NSString *prefix in prefixes)
+		{
+			for (NSString *suffix in suffixes)
+			{
+				NSString *macroName = [prefix stringByAppendingString:suffix];
+				NSArray *parameters = [suffixes objectForKey:suffix];
+				
+				[validMacros setObject:parameters forKey:macroName];
+			}
+		}
+		
+		_validMacros = validMacros;
+	}
+	
+	return _validMacros;
 }
 
 #define QUOTE @"\""
 
 - (void)beginProcessingFile:(NSURL *)fileURL
 {
-    NSDictionary *validMacros = [self validMacros];
-
-    DTLocalizableStringScanner *scanner = [[DTLocalizableStringScanner alloc] initWithContentsOfURL:fileURL encoding:_inputEncoding validMacros:validMacros];
-
-    [scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
+	NSDictionary *validMacros = [self validMacros];
+	
+	DTLocalizableStringScanner *scanner = [[DTLocalizableStringScanner alloc] initWithContentsOfURL:fileURL encoding:_inputEncoding validMacros:validMacros];
+	
+	[scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
     {
         entry.keyIncludesComments = _keyIncludesComments;
         entry.keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
 
-        NSString *key = [entry key];
-        NSString *value = [entry rawValue];
-        BOOL shouldBeAdded = ([key hasPrefix:QUOTE] && [key hasSuffix:QUOTE]);
-
-        if (value)
-        {
-            shouldBeAdded &= ([value hasPrefix:QUOTE] && [value hasSuffix:QUOTE]);
-        }
-
-        if (shouldBeAdded)
-        {
-            dispatch_group_async(_tableGroup, _tableQueue, ^{
-                [self addEntryToTables:entry];
-            });
-        }
-        else
-        {
-            NSLog(@"skipping: %@", entry);
-        }
+         NSString *key = [entry key];
+		 NSString *value = [entry rawValue];
+		 BOOL shouldBeAdded = ([key hasPrefix:QUOTE] && [key hasSuffix:QUOTE]);
+		 
+		 if (value)
+		 {
+			 shouldBeAdded &= ([value hasPrefix:QUOTE] && [value hasSuffix:QUOTE]);
+		 }
+		 
+		 if (shouldBeAdded)
+		 {
+			 dispatch_group_async(_tableGroup, _tableQueue, ^{
+				 [self addEntryToTables:entry];
+			 });
+		 }
+		 else
+		 {
+			 NSLog(@"skipping: %@", entry);
+		 }
     }];
-
-    [_processingQueue addOperation:scanner];
+	
+	[_processingQueue addOperation:scanner];
 }
 
 - (void)addEntryToTables:(DTLocalizableStringEntry *)entry
 {
-    NSAssert(dispatch_get_current_queue() == _tableQueue, @"method called from invalid queue");
-    if (!_stringTables)
-    {
-        _stringTables = [NSMutableDictionary dictionary];
-    }
-
-    NSString *tableName = [entry tableName];
-
-    BOOL shouldSkip = [_tablesToSkip containsObject:tableName];
-
-    if (!shouldSkip)
-    {
-        // find the string table for this token, or create it
-        DTLocalizableStringTable *table = [_stringTables objectForKey:tableName];
-        if (!table)
-        {
-            // need to create it
+	NSAssert(dispatch_get_current_queue() == _tableQueue, @"method called from invalid queue");
+	if (!_stringTables)
+	{
+		_stringTables = [NSMutableDictionary dictionary];
+	}
+	
+	// use default table name is no name set
+	if (![entry.tableName length])
+	{
+		entry.tableName = _defaultTableName ? _defaultTableName : @"Localizable";
+	}
+	
+	NSString *tableName = [entry tableName];
+	
+	BOOL shouldSkip = [_tablesToSkip containsObject:tableName];
+	
+	if (!shouldSkip)
+	{
+		// find the string table for this token, or create it
+		DTLocalizableStringTable *table = [_stringTables objectForKey:tableName];
+		if (!table)
+		{
+			// need to create it
 			table = [[DTLocalizableStringTable alloc] initWithName:tableName];
-            [_stringTables setObject:table forKey:tableName];
-        }
-
+			[_stringTables setObject:table forKey:tableName];
+		}
+		
 		if (entry.rawValue)
-        {
+		{
 			// ...WithDefaultValue
 			if (_wantsPositionalParameters)
-            {
+			{
 				entry.rawValue = [entry.rawValue stringByNumberingFormatPlaceholders];
 			}
 
 			[table addEntry:entry];
 		}
-        else
-        {
+		else
+		{
 			// all other options use the key and variations thereof
 
 			// support for predicate token splitting
@@ -189,33 +197,33 @@
 
 			// add all variants
 			for (NSString *oneVariant in keyVariants)
-            {
+			{
 				DTLocalizableStringEntry *splitEntry = [entry copy];
 
 				NSString *value = oneVariant;
 				if (_wantsPositionalParameters)
-                {
+				{
 					value = [oneVariant stringByNumberingFormatPlaceholders];
 				}
-
+				
 				// adjust key and value of the new entry
 				splitEntry.rawKey = entry.key;
 				splitEntry.rawValue = value;
-
+				
 				// add token to this table
 				[table addEntry:splitEntry];
 			}
 		}
-    }
+	}
 }
 
 - (NSArray *)aggregatedStringTables
 {
-    // wait for both of these things to finish
-    [_processingQueue waitUntilAllOperationsAreFinished];
-    dispatch_group_wait(_tableGroup, DISPATCH_TIME_FOREVER);
-
-    return [_stringTables allValues];
+	// wait for both of these things to finish
+	[_processingQueue waitUntilAllOperationsAreFinished];
+	dispatch_group_wait(_tableGroup, DISPATCH_TIME_FOREVER);
+	
+	return [_stringTables allValues];
 }
 
 @end

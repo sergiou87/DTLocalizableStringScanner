@@ -31,7 +31,8 @@ int main (int argc, const char *argv[])
         NSString *keyIncludesCommentsDelimiter = @"|";
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
-
+        NSString *defaultTableName = nil;
+        
         // analyze options
         BOOL optionsInvalid = NO;
         NSUInteger i = 1;
@@ -150,11 +151,28 @@ int main (int argc, const char *argv[])
             {
                 outputStringEncoding = NSUTF16BigEndianStringEncoding;
             }
+            else if (!strcmp("-utf8", argv[i]))
+            {
+                outputStringEncoding = NSUTF8StringEncoding;
+            }
             else if (!strcmp("-macRoman", argv[i]))
             {
                 inputStringEncoding = NSMacOSRomanStringEncoding;
             }
-
+            else if (!strcmp("-defaultTable", argv[i]))
+            {
+                i++;
+                
+                if (i>=argc)
+                {
+                    // table name is missing
+                    optionsInvalid = YES;
+                    break;
+                }
+                
+                defaultTableName = [NSString stringWithUTF8String:argv[i]];
+            }
+            
             i++;
         }
 
@@ -174,7 +192,9 @@ int main (int argc, const char *argv[])
         aggregator.customMacroPrefix = customMacroPrefix;
         aggregator.keyIncludesComments = keyIncludesComments;
         aggregator.keyIncludesCommentsDelimiter = keyIncludesCommentsDelimiter;
-
+        aggregator.tablesToSkip = tablesToSkip;
+        aggregator.defaultTableName = defaultTableName;
+		
         // go, go, go!
         for (NSURL *file in files) {
             [aggregator beginProcessingFile:file];
@@ -234,7 +254,9 @@ void showUsage(void)
     printf("    -q                       turns off multiple key/value pairs warning.\n");
     printf("    -bigEndian               output generated with big endian byte order.\n");
     printf("    -littleEndian            output generated with little endian byte order.\n");
+    printf("    -utf8                    output generated as UTF-8 not UTF-16.\n");
     printf("    -o dir                   place output files in 'dir'.\n\n");
+    printf("    -defaultTable tablename  use 'tablename' instead of 'Localizable' as default table name.\n");
     printf("    Please see the genstrings2(1) man page for full documentation\n");
 }
 

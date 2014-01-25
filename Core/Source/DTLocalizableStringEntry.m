@@ -82,15 +82,6 @@
 
 #pragma mark Properties
 
-- (NSString *)tableName
-{
-    if ([_tableName length] == 0)
-    {
-        return @"Localizable";
-    }
-    return _tableName;
-}
-
 - (void)setTableName:(NSString *)tableName
 {
     tableName = [tableName stringByReplacingSlashEscapes];
