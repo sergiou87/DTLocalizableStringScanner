@@ -244,10 +244,10 @@
         _currentIndex++;
     }
 
-    NSUInteger stringLength = _currentIndex - quotedStringStart;
+    NSUInteger stringLength = _currentIndex - quotedStringStart - 2; // Without quotes
 
     // we don't use the NoCopy variant, because we need this string to out-live the _characters buffer
-    NSString *string = [[NSString alloc] initWithCharacters:(_characters+quotedStringStart) length:stringLength];
+    NSString *string = [[NSString alloc] initWithCharacters:(_characters+quotedStringStart+1) length:stringLength];
 
     return string;
 }

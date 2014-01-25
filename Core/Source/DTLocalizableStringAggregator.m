@@ -38,7 +38,6 @@
 @synthesize tablesToSkip = _tablesToSkip;
 @synthesize customMacroPrefix = _customMacroPrefix;
 @synthesize keyIncludesComments = _keyIncludesComments;
-@synthesize keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
 
 @synthesize defaultTableName = _defaultTableName;
 
@@ -112,8 +111,6 @@
 	return _validMacros;
 }
 
-#define QUOTE @"\""
-
 - (void)beginProcessingFile:(NSURL *)fileURL
 {
 	NSDictionary *validMacros = [self validMacros];
@@ -123,27 +120,10 @@
 	[scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
     {
         entry.keyIncludesComments = _keyIncludesComments;
-        entry.keyIncludesCommentsDelimiter = _keyIncludesCommentsDelimiter;
 
-         NSString *key = [entry key];
-		 NSString *value = [entry rawValue];
-		 BOOL shouldBeAdded = ([key hasPrefix:QUOTE] && [key hasSuffix:QUOTE]);
-		 
-		 if (value)
-		 {
-			 shouldBeAdded &= ([value hasPrefix:QUOTE] && [value hasSuffix:QUOTE]);
-		 }
-		 
-		 if (shouldBeAdded)
-		 {
-			 dispatch_group_async(_tableGroup, _tableQueue, ^{
-				 [self addEntryToTables:entry];
-			 });
-		 }
-		 else
-		 {
-			 NSLog(@"skipping: %@", entry);
-		 }
+        dispatch_group_async(_tableGroup, _tableQueue, ^{
+            [self addEntryToTables:entry];
+        });
     }];
 	
 	[_processingQueue addOperation:scanner];

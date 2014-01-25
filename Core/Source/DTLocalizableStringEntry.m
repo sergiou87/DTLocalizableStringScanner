@@ -11,9 +11,6 @@
 
 @implementation DTLocalizableStringEntry
 {
-	NSMutableSet *_comments;
-
-	NSArray *_sortedCommentsCache;
     NSString *_cleanedKey;
 }
 
@@ -22,7 +19,6 @@
 @synthesize tableName=_tableName;
 @synthesize bundle=_bundle;
 @synthesize keyIncludesComments=_keyIncludesComments;
-@synthesize keyIncludesCommentsDelimiter=_keyIncludesCommentsDelimiter;
 
 - (NSString *)description
 {
@@ -38,10 +34,7 @@
 		[tmpString appendFormat:@" table='%@'", _tableName];
 	}
 
-        for (NSString *oneComment in _comments)
-        {
-                [tmpString appendFormat:@" comment='%@'", oneComment];
-        }
+    [tmpString appendFormat:@" comment='%@'", _comment];
 
 	[tmpString appendString:@">"];
 
@@ -56,12 +49,8 @@
 	newEntry.rawValue = _rawValue;
 	newEntry.tableName = _tableName;
 	newEntry.bundle = _bundle;
-
-	for (NSString *oneComment in _comments)
-	{
-		[newEntry addComment:oneComment];
-	}
-
+    newEntry.comment = _comment;
+    
 	return newEntry;
 }
 
@@ -97,55 +86,6 @@
 	}
 }
 
-- (void)setComment:(NSString *)comment; // for KVC
-{
-	_comments = nil;
-	[self addComment:comment];
-}
-
-- (void)addComment:(NSString *)comment
-{
-    comment = [self _stringByRecognizingNil:comment];
-
-	// remove the quotes
-	comment = [comment stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-
-	if (![comment length])
-	{
-		return;
-	}
-
-	if (!_comments)
-	{
-		_comments = [[NSMutableSet alloc] init];
-	}
-
-	if (![_comments containsObject:comment])
-	{
-		[_comments addObject:[comment copy]];
-
-		// invalidates sorted cache
-		_sortedCommentsCache = nil;
-	}
-}
-
-- (NSArray *)sortedComments
-{
-	if (!_comments)
-	{
-		return nil;
-	}
-
-	if (_sortedCommentsCache)
-	{
-		return _sortedCommentsCache;
-	}
-
-    _sortedCommentsCache = [[_comments allObjects] sortedArrayUsingSelector:@selector(compare:)];
-
-	return _sortedCommentsCache;
-}
-
 - (void) setRawKey:(NSString *)rawKey {
     if (rawKey != _rawKey) {
         _rawKey = rawKey;
@@ -162,14 +102,9 @@
 
 - (NSString *)key
 {
-    if (_keyIncludesComments && _keyIncludesCommentsDelimiter) {
-        NSString *prefix = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-        NSMutableString *tmpString = [NSMutableString stringWithFormat:@"\"%@", prefix];
-        for (NSString *comment in _comments) {
-            [tmpString appendFormat:@"%@%@", _keyIncludesCommentsDelimiter, comment];
-        }
-        [tmpString appendString:@"\""];
-        return tmpString;
+    if (_keyIncludesComments && _comment) {
+        NSString *trimmedKey = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
+        return [NSString stringWithFormat:@"(%@)%@", _comment, trimmedKey];
     } else {
         return _rawKey;
     }

@@ -60,11 +60,6 @@
 				   [key UTF8String], [existingEntry.rawValue UTF8String], [entry.rawValue UTF8String]);
 		}
 
-		for (NSString *oneComment in [entry sortedComments])
-		{
-			[existingEntry addComment:oneComment];
-		}
-
 		return;
 	}
 
@@ -90,7 +85,7 @@
         }
 
         // multi-line comments are indented
-        NSString *comment = [[entry sortedComments] componentsJoinedByString:@"\n   "];
+        NSString *comment = entry.comment;
         if (!comment)
         {
             comment = @"No comment provided by engineer.";
@@ -121,7 +116,7 @@
         [tmpString appendFormat:@"/* %@ */\n", comment];
 
         // output line
-        [tmpString appendFormat:@"%@ = %@;\n", key, value];
+        [tmpString appendFormat:@"\"%@\" = \"%@\";\n", key, value];
 
         [tmpString appendString:@"\n"];
 	}

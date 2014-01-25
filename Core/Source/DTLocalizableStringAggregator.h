@@ -41,7 +41,6 @@
  */
 @property (nonatomic, retain) NSString *customMacroPrefix;
 @property (nonatomic, assign) BOOL keyIncludesComments;
-@property (nonatomic, retain) NSString *keyIncludesCommentsDelimiter;
 
 /**
  The default table name, if not set it defaults to "Localizable".

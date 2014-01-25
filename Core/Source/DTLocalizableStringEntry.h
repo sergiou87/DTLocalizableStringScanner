@@ -52,29 +52,8 @@
  */
 @property (nonatomic, readonly) NSString *cleanedValue;
 @property (nonatomic, assign) BOOL keyIncludesComments;
-@property (nonatomic, copy) NSString *keyIncludesCommentsDelimiter;
 
-/**
- @name Working with Comments
- */
-
-/**
- Removes all existing comments and sets a single one.
- @param comment The comment to set.
- */
-- (void)setComment:(NSString *)comment;
-
-/**
- Appends the comment to the receiver's list of comments
-  @param comment The comment to add.
- */
-- (void)addComment:(NSString *)comment;
-
-/**
- An alphabetically sorted list of comments. This property is cached internally.
- @returns The sorted comments
- */
-- (NSArray *)sortedComments;
+@property (nonatomic, copy) NSString *comment;
 
 /**
  @name Sorting Entries

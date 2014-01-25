@@ -25,7 +25,6 @@ int main (int argc, const char *argv[])
         NSStringEncoding outputStringEncoding = NSUTF16StringEncoding;
 
         BOOL wantsPositionalParameters = YES;
-		BOOL wantsMultipleCommentWarning = YES;
         BOOL wantsDecodedUnicodeSequences = NO;
         BOOL keyIncludesComments = NO;
         NSString *keyIncludesCommentsDelimiter = @"|";
@@ -105,11 +104,6 @@ int main (int argc, const char *argv[])
 
                 customMacroPrefix = [NSString stringWithUTF8String:argv[i]];
             }
-			else if (!strcmp("-q", argv[i]))
-			{
-				// do not warn if multiple different comments are attached to a token
-				wantsMultipleCommentWarning = NO;
-			}
             else if (!strcmp("-keyIncludesComments", argv[i]))
             {
                 keyIncludesComments = YES;
@@ -191,7 +185,6 @@ int main (int argc, const char *argv[])
         aggregator.inputEncoding = inputStringEncoding;
         aggregator.customMacroPrefix = customMacroPrefix;
         aggregator.keyIncludesComments = keyIncludesComments;
-        aggregator.keyIncludesCommentsDelimiter = keyIncludesCommentsDelimiter;
         aggregator.tablesToSkip = tablesToSkip;
         aggregator.defaultTableName = defaultTableName;
 		
@@ -203,17 +196,6 @@ int main (int argc, const char *argv[])
         NSArray *aggregatedTables = [aggregator aggregatedStringTables];
 
         DTLocalizableStringEntryWriteCallback writeCallback = nil;
-
-        if (wantsMultipleCommentWarning) {
-            writeCallback = ^(DTLocalizableStringEntry *entry) {
-				NSArray *comments = [entry sortedComments];
-
-				if ([comments count] > 1) {
-					NSString *tmpString = [comments componentsJoinedByString:@"\" & \""];
-					printf("Warning: Key \"%s\" used with multiple comments \"%s\"\n", [entry.rawKey UTF8String], [tmpString UTF8String]);
-				}
-            };
-        }
 
 		// set output dir to current working dir if not set
 		if (!outputFolderURL) {
