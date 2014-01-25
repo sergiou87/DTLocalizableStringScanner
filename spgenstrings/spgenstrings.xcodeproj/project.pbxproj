@@ -23,7 +23,6 @@
 /* Begin PBXBuildFile section */
 		4065035E1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
 		4065035F1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
-		4065038C189407A600EA66D5 /* SPExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065038A189407A600EA66D5 /* SPExample.m */; };
 		40650390189407CF00EA66D5 /* SPLocalizedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065038F189407CF00EA66D5 /* SPLocalizedString.m */; };
 		A775234214ACEF7A0035CDCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A775234114ACEF7A0035CDCA /* Foundation.framework */; };
 		A79499AD14C0D35500A8CCDE /* NSPredicateEditor.txt in Resources */ = {isa = PBXBuildFile; fileRef = A79499AC14C0D35500A8CCDE /* NSPredicateEditor.txt */; };
@@ -72,10 +71,10 @@
 		406503591893EFA500EA66D5 /* spgenstrings-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "spgenstrings-Prefix.pch"; sourceTree = "<group>"; };
 		4065035C1893EFA500EA66D5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4065037F1894035700EA66D5 /* SPLocalizableStringsValidMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPLocalizableStringsValidMacros.h; sourceTree = "<group>"; };
-		40650389189407A600EA66D5 /* SPExample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPExample.h; sourceTree = "<group>"; };
-		4065038A189407A600EA66D5 /* SPExample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPExample.m; sourceTree = "<group>"; };
 		4065038E189407CF00EA66D5 /* SPLocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPLocalizedString.h; sourceTree = "<group>"; };
 		4065038F189407CF00EA66D5 /* SPLocalizedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPLocalizedString.m; sourceTree = "<group>"; };
+		406503AB18941C9B00EA66D5 /* SPExample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SPExample.h; path = ../Example/Source/SPExample.h; sourceTree = "<group>"; };
+		406503AC18941C9B00EA66D5 /* SPExample.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SPExample.m; path = ../Example/Source/SPExample.m; sourceTree = "<group>"; };
 		55951CFE14BD3C1700E4A63E /* DTLocalizableStringEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLocalizableStringEntry.h; sourceTree = "<group>"; };
 		55951CFF14BD3C1700E4A63E /* DTLocalizableStringEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLocalizableStringEntry.m; sourceTree = "<group>"; };
 		A775233D14ACEF7A0035CDCA /* genstrings2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genstrings2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,16 +163,6 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		40650387189407A600EA66D5 /* Demo */ = {
-			isa = PBXGroup;
-			children = (
-				40650389189407A600EA66D5 /* SPExample.h */,
-				4065038A189407A600EA66D5 /* SPExample.m */,
-			);
-			name = Demo;
-			path = ../Demo;
-			sourceTree = "<group>";
-		};
 		4065038D189407CF00EA66D5 /* SPLocalizedString */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +171,15 @@
 			);
 			name = SPLocalizedString;
 			path = ../SPLocalizedString;
+			sourceTree = "<group>";
+		};
+		406503AD18941C9F00EA66D5 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				406503AB18941C9B00EA66D5 /* SPExample.h */,
+				406503AC18941C9B00EA66D5 /* SPExample.m */,
+			);
+			name = Demo;
 			sourceTree = "<group>";
 		};
 		A775233214ACEF790035CDCA = {
@@ -194,8 +192,8 @@
 				406503581893EFA500EA66D5 /* spgenstrings */,
 				A775234014ACEF7A0035CDCA /* Frameworks */,
 				A775233E14ACEF7A0035CDCA /* Products */,
-				40650387189407A600EA66D5 /* Demo */,
 				4065038D189407CF00EA66D5 /* SPLocalizedString */,
+				406503AD18941C9F00EA66D5 /* Demo */,
 			);
 			sourceTree = "<group>";
 		};
@@ -481,7 +479,6 @@
 			files = (
 				A7F65DE714C0465E0092E2EE /* (null) in Sources */,
 				40650390189407CF00EA66D5 /* SPLocalizedString.m in Sources */,
-				4065038C189407A600EA66D5 /* SPExample.m in Sources */,
 				4065035F1893EFA500EA66D5 /* main.m in Sources */,
 				FA35A35616DFA1C0001CB74A /* UnitTest.m in Sources */,
 			);

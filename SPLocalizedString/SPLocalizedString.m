@@ -12,7 +12,7 @@
 
 NSString *SPLocalization_localizedString(NSString *key, NSString *context, NSString *table, NSBundle *bundle, NSString *value)
 {
-    return NSLocalizedStringWithDefaultValue(key, table, bundle, value, comment);
+    return NSLocalizedStringWithDefaultValue(key, table, bundle, value, context);
 }
 
 #pragma mark - Plural localized strings
@@ -20,5 +20,5 @@ NSString *SPLocalization_localizedString(NSString *key, NSString *context, NSStr
 NSString *SPLocalization_localizedStringPlural(NSString *keyOne, NSString *keyOther, NSString *context, NSInteger count, NSString *table, NSBundle *bundle, NSString *value)
 {
     NSString *key = (count == 1 ? keyOne : keyOther);
-    return NSLocalizedStringWithDefaultValue(key, table, bundle, value, comment);
+    return NSLocalizedStringWithDefaultValue(key, table, bundle, value, context);
 }

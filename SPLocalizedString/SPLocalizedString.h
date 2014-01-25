@@ -8,18 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-//#define NSLocalizedString(key, comment) \
-//[[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
-
-//#define NSLocalizedStringFromTable(key, tbl, comment) \
-//[[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:(tbl)]
-
-//#define NSLocalizedStringFromTableInBundle(key, tbl, bundle, comment) \
-//[bundle localizedStringForKey:(key) value:@"" table:(tbl)]
-
-//#define NSLocalizedStringWithDefaultValue(key, tbl, bundle, val, comment) \
-//[bundle localizedStringForKey:(key) value:(val) table:(tbl)]
-
 #define SPLocalizedStringWithDefaultValue(key, context, table, bundle, value) \
 SPLocalization_localizedString(@"(" context @")" key, context, table, bundle, value)
 
