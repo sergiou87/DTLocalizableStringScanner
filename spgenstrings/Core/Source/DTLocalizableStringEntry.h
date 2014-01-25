@@ -14,7 +14,7 @@
  An entry in a string table
  */
 
-@interface DTLocalizableStringEntry : NSObject
+@interface DTLocalizableStringEntry : NSObject <NSCopying>
 
 /**
  @name Getting Information about Entries

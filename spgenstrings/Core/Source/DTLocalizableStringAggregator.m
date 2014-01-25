@@ -13,6 +13,8 @@
 #import "DTLocalizableStringEntry.h"
 #import "NSString+DTLocalizableStringScanner.h"
 
+#import "SPLocalizableStringsValidMacros.h"
+
 @interface DTLocalizableStringAggregator ()
 
 - (void)addEntryToTables:(DTLocalizableStringEntry *)entry;
@@ -72,25 +74,25 @@
 	}
 }
 
-#define KEY @"rawKey"
-#define CONTEXT @"context"
-#define VALUE @"rawValue"
-#define BUNDLE @"bundle"
-#define TABLE @"tableName"
-
 - (NSDictionary *)validMacros
 {
 	if (!_validMacros)
 	{
 		// we know the allowed formats for NSLocalizedString() macros, so we can hard-code them
 		// there's no need to parse this stuff when we know what format things must be
-		NSArray *prefixes = [NSArray arrayWithObjects:@"NSLocalizedString", @"CFCopyLocalizedString", _customMacroPrefix, nil];
+		NSArray *prefixes = [NSArray arrayWithObjects:@"SPLocalizedString", _customMacroPrefix, nil];
 		NSDictionary *suffixes = [NSDictionary dictionaryWithObjectsAndKeys:
-										  [NSArray arrayWithObjects:KEY, CONTEXT, nil], @"",
-										  [NSArray arrayWithObjects:KEY, TABLE, CONTEXT, nil], @"FromTable",
-										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, CONTEXT, nil], @"FromTableInBundle",
-										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, CONTEXT, nil], @"WithDefaultValue",
-										  nil];
+                                  // Without plural
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, nil], @"",
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, TABLE, nil], @"FromTable",
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, TABLE, BUNDLE, nil], @"FromTableInBundle",
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, TABLE, BUNDLE, VALUE, nil], @"WithDefaultValue",
+                                  // With plural
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, COUNT, nil], PLURAL,
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, COUNT, TABLE, nil], @"PluralFromTable",
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, COUNT, TABLE, BUNDLE, nil], @"PluralFromTableInBundle",
+                                  [NSArray arrayWithObjects:KEY, CONTEXT, COUNT, TABLE, BUNDLE, VALUE, nil], @"PluralWithDefaultValue",
+                                  nil];
 		
 		NSMutableDictionary *validMacros = [NSMutableDictionary dictionary];
 		for (NSString *prefix in prefixes)

@@ -9,6 +9,7 @@
 #import "DTLocalizableStringScanner.h"
 #import "DTLocalizableStringEntry.h"
 #import "NSString+DTLocalizableStringScanner.h"
+#import "SPLocalizableStringsValidMacros.h"
 
 @interface DTLocalizableStringScanner ()
 
@@ -381,20 +382,34 @@
                 NSString *property = [expectedParameters objectAtIndex:i];
                 NSString *value = [parameters objectAtIndex:i];
 
-                if ([property isEqualToString:@"rawKey"]) {
+                if ([property isEqualToString:KEY]) {
                     entry.rawKey = value;
-                } else if ([property isEqualToString:@"comment"]) {
+                } else if ([property isEqualToString:CONTEXT]) {
                     [entry setContext:value];
-                } else if ([property isEqualToString:@"tableName"]) {
+                } else if ([property isEqualToString:TABLE]) {
                     entry.tableName = value;
-                } else if ([property isEqualToString:@"bundle"]) {
+                } else if ([property isEqualToString:BUNDLE]) {
                     entry.bundle = value;
+                } else if ([property isEqualToString:COUNT]) {
+                    // Do nothing
                 } else {
                     [entry setValue:value forKey:property];
                 }
             }
-
-            if (_entryFoundCallback)
+            
+            if ([macroName rangeOfString:PLURAL].location != NSNotFound)
+            {
+                DTLocalizableStringEntry *otherEntry = [entry copy];
+                otherEntry.context = [NSString stringWithFormat:@"%@##other", otherEntry.context];
+                entry.context = [NSString stringWithFormat:@"%@##one", entry.context];
+                
+                if (_entryFoundCallback)
+                {
+                    _entryFoundCallback(entry);
+                    _entryFoundCallback(otherEntry);
+                }
+            }
+            else if (_entryFoundCallback)
             {
                 _entryFoundCallback(entry);
             }

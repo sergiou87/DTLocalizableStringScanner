@@ -14,11 +14,9 @@
 
 - (void)doSomething
 {
-    SPLocalizedString(@"Test", @"Test title in some context");
+    SPLocalizedStringFromTable(@"Test", @"Test title in some context", @"Mytable");
     SPLocalizedString(@"Test", @"Test title in other context");
     SPLocalizedString(@"Test", @"Third test title");
-    
-    
     
     SPLocalizedStringPlural(@"%d people is following you", @"Followers label description", 7);
 }
