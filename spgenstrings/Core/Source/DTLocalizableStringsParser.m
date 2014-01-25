@@ -4,6 +4,7 @@
 //
 //  Created by Stefan Gugarel on 2/27/13.
 //  Copyright (c) 2013 Drobnik KG. All rights reserved.
+//  Copyright (c) 2014 Sergio Padrino All rights reserved.
 //
 
 #import "DTLocalizableStringsParser.h"

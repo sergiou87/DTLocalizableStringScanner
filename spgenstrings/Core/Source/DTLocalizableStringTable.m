@@ -4,6 +4,7 @@
 //
 //  Created by Oliver Drobnik on 1/12/12.
 //  Copyright (c) 2012 Drobnik KG. All rights reserved.
+//  Copyright (c) 2014 Sergio Padrino All rights reserved.
 //
 
 #import "DTLocalizableStringTable.h"
