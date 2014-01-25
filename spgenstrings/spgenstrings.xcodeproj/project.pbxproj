@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		4065035D1893EFA500EA66D5 /* genstrings2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 4065035A1893EFA500EA66D5 /* genstrings2.1 */; };
 		4065035E1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
 		4065035F1893EFA500EA66D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065035C1893EFA500EA66D5 /* main.m */; };
 		4065038C189407A600EA66D5 /* SPExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 4065038A189407A600EA66D5 /* SPExample.m */; };
@@ -54,7 +53,6 @@
 		FA35A34B16DFA0F8001CB74A /* DTLocalizableStringsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FA35A34916DFA0F8001CB74A /* DTLocalizableStringsParser.m */; };
 		FA35A34D16DFA106001CB74A /* libDTLocalizableStringScanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A79AC08814B1A51800489FA3 /* libDTLocalizableStringScanner.a */; };
 		FA35A34F16DFA12A001CB74A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA35A34E16DFA12A001CB74A /* Localizable.strings */; };
-		FA35A35516DFA1C0001CB74A /* DTLocalizableStringsParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FA35A35216DFA1C0001CB74A /* DTLocalizableStringsParserTest.m */; };
 		FA35A35616DFA1C0001CB74A /* UnitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FA35A35416DFA1C0001CB74A /* UnitTest.m */; };
 /* End PBXBuildFile section */
 
@@ -71,8 +69,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		406503591893EFA500EA66D5 /* genstrings2-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "genstrings2-Prefix.pch"; sourceTree = "<group>"; };
-		4065035A1893EFA500EA66D5 /* genstrings2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = genstrings2.1; sourceTree = "<group>"; };
+		406503591893EFA500EA66D5 /* spgenstrings-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "spgenstrings-Prefix.pch"; sourceTree = "<group>"; };
 		4065035C1893EFA500EA66D5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4065037F1894035700EA66D5 /* SPLocalizableStringsValidMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPLocalizableStringsValidMacros.h; sourceTree = "<group>"; };
 		40650389189407A600EA66D5 /* SPExample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPExample.h; sourceTree = "<group>"; };
@@ -115,8 +112,6 @@
 		FA35A34816DFA0F8001CB74A /* DTLocalizableStringsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLocalizableStringsParser.h; sourceTree = "<group>"; };
 		FA35A34916DFA0F8001CB74A /* DTLocalizableStringsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLocalizableStringsParser.m; sourceTree = "<group>"; };
 		FA35A34E16DFA12A001CB74A /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		FA35A35116DFA1C0001CB74A /* DTLocalizableStringsParserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLocalizableStringsParserTest.h; sourceTree = "<group>"; };
-		FA35A35216DFA1C0001CB74A /* DTLocalizableStringsParserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLocalizableStringsParserTest.m; sourceTree = "<group>"; };
 		FA35A35316DFA1C0001CB74A /* UnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitTest.h; sourceTree = "<group>"; };
 		FA35A35416DFA1C0001CB74A /* UnitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnitTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -155,8 +150,7 @@
 		406503581893EFA500EA66D5 /* spgenstrings */ = {
 			isa = PBXGroup;
 			children = (
-				406503591893EFA500EA66D5 /* genstrings2-Prefix.pch */,
-				4065035A1893EFA500EA66D5 /* genstrings2.1 */,
+				406503591893EFA500EA66D5 /* spgenstrings-Prefix.pch */,
 				4065035B1893EFA500EA66D5 /* Source */,
 			);
 			path = spgenstrings;
@@ -304,8 +298,6 @@
 		FA35A35016DFA1C0001CB74A /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				FA35A35116DFA1C0001CB74A /* DTLocalizableStringsParserTest.h */,
-				FA35A35216DFA1C0001CB74A /* DTLocalizableStringsParserTest.m */,
 				FA35A35316DFA1C0001CB74A /* UnitTest.h */,
 				FA35A35416DFA1C0001CB74A /* UnitTest.m */,
 			);
@@ -417,7 +409,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4065035D1893EFA500EA66D5 /* genstrings2.1 in Resources */,
 				A7F65DDC14C040D00092E2EE /* Testcases.txt in Resources */,
 				A7F65DE214C043850092E2EE /* Slashes_and_Quotes.txt in Resources */,
 				A7F65DEB14C067990092E2EE /* Multiple_Tables.txt in Resources */,
@@ -491,7 +482,6 @@
 				A7F65DE714C0465E0092E2EE /* (null) in Sources */,
 				40650390189407CF00EA66D5 /* SPLocalizedString.m in Sources */,
 				4065038C189407A600EA66D5 /* SPExample.m in Sources */,
-				FA35A35516DFA1C0001CB74A /* DTLocalizableStringsParserTest.m in Sources */,
 				4065035F1893EFA500EA66D5 /* main.m in Sources */,
 				FA35A35616DFA1C0001CB74A /* UnitTest.m in Sources */,
 			);

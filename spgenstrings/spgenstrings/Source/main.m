@@ -26,7 +26,6 @@ int main (int argc, const char *argv[])
 
         BOOL wantsPositionalParameters = YES;
         BOOL wantsDecodedUnicodeSequences = NO;
-        NSString *keyIncludesCommentsDelimiter = @"|";
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
         NSString *defaultTableName = nil;
@@ -102,16 +101,6 @@ int main (int argc, const char *argv[])
                 }
 
                 customMacroPrefix = [NSString stringWithUTF8String:argv[i]];
-            }
-            else if (!strcmp("-keyIncludesCommentsDelimiter", argv[i]))
-            {
-                i++;
-                if (i>=argc)
-                {
-                    optionsInvalid = YES;
-                    break;
-                }
-                keyIncludesCommentsDelimiter = [NSString stringWithUTF8String:argv[i]];
             }
             else if (!strcmp("-u", argv[i]))
             {
@@ -217,11 +206,9 @@ int main (int argc, const char *argv[])
 
 void showUsage(void)
 {
-    printf("Usage: genstrings2 [OPTIONS] file...\n\n");
+    printf("Usage: spgenstrings [OPTIONS] file...\n\n");
     printf("    Options\n");
-    //   printf("    -j                       sets the input language to Java.\n");
-    //   printf("    -a                       append output to the old strings files.\n");
-    printf("    -s substring             substitute 'substring' for NSLocalizedString.\n");
+    printf("    -s substring             substitute 'substring' for SPLocalizedString.\n");
     printf("    -skipTable tablename     skip over the file for 'tablename'.\n");
     printf("    -noPositionalParameters  turns off positional parameter support.\n");
     printf("    -u                       allow unicode characters in the values of strings files.\n");
@@ -232,7 +219,6 @@ void showUsage(void)
     printf("    -utf8                    output generated as UTF-8 not UTF-16.\n");
     printf("    -o dir                   place output files in 'dir'.\n\n");
     printf("    -defaultTable tablename  use 'tablename' instead of 'Localizable' as default table name.\n");
-    printf("    Please see the genstrings2(1) man page for full documentation\n");
 }
 
 
