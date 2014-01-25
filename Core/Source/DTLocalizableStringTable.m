@@ -84,13 +84,6 @@
             entryWriteCallback(entry);
         }
 
-        // multi-line comments are indented
-        NSString *comment = entry.comment;
-        if (!comment)
-        {
-            comment = @"No comment provided by engineer.";
-        }
-
         if (_shouldDecodeUnicodeSequences)
 		{
 			// strip the quotes
@@ -111,9 +104,6 @@
 			// re-add quotes
 			value = [NSString stringWithFormat:@"\"%@\"", value];
         }
-
-        // output comment
-        [tmpString appendFormat:@"/* %@ */\n", comment];
 
         // output line
         [tmpString appendFormat:@"\"%@\" = \"%@\";\n", key, value];

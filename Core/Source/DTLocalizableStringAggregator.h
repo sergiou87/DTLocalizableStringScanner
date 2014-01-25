@@ -40,7 +40,6 @@
  The custom macro prefix to use instead of NSLocalizedString.
  */
 @property (nonatomic, retain) NSString *customMacroPrefix;
-@property (nonatomic, assign) BOOL keyIncludesComments;
 
 /**
  The default table name, if not set it defaults to "Localizable".

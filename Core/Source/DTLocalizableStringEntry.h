@@ -51,9 +51,8 @@
  The contents of the rawValue with escape sequences removed
  */
 @property (nonatomic, readonly) NSString *cleanedValue;
-@property (nonatomic, assign) BOOL keyIncludesComments;
 
-@property (nonatomic, copy) NSString *comment;
+@property (nonatomic, copy) NSString *context;
 
 /**
  @name Sorting Entries

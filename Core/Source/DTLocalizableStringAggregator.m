@@ -37,7 +37,6 @@
 @synthesize inputEncoding = _inputEncoding;
 @synthesize tablesToSkip = _tablesToSkip;
 @synthesize customMacroPrefix = _customMacroPrefix;
-@synthesize keyIncludesComments = _keyIncludesComments;
 
 @synthesize defaultTableName = _defaultTableName;
 
@@ -74,7 +73,7 @@
 }
 
 #define KEY @"rawKey"
-#define COMMENT @"comment"
+#define CONTEXT @"context"
 #define VALUE @"rawValue"
 #define BUNDLE @"bundle"
 #define TABLE @"tableName"
@@ -87,10 +86,10 @@
 		// there's no need to parse this stuff when we know what format things must be
 		NSArray *prefixes = [NSArray arrayWithObjects:@"NSLocalizedString", @"CFCopyLocalizedString", _customMacroPrefix, nil];
 		NSDictionary *suffixes = [NSDictionary dictionaryWithObjectsAndKeys:
-										  [NSArray arrayWithObjects:KEY, COMMENT, nil], @"",
-										  [NSArray arrayWithObjects:KEY, TABLE, COMMENT, nil], @"FromTable",
-										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, COMMENT, nil], @"FromTableInBundle",
-										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, COMMENT, nil], @"WithDefaultValue",
+										  [NSArray arrayWithObjects:KEY, CONTEXT, nil], @"",
+										  [NSArray arrayWithObjects:KEY, TABLE, CONTEXT, nil], @"FromTable",
+										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, CONTEXT, nil], @"FromTableInBundle",
+										  [NSArray arrayWithObjects:KEY, TABLE, BUNDLE, VALUE, CONTEXT, nil], @"WithDefaultValue",
 										  nil];
 		
 		NSMutableDictionary *validMacros = [NSMutableDictionary dictionary];
@@ -119,8 +118,6 @@
 	
 	[scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
     {
-        entry.keyIncludesComments = _keyIncludesComments;
-
         dispatch_group_async(_tableGroup, _tableQueue, ^{
             [self addEntryToTables:entry];
         });
@@ -187,7 +184,7 @@
 				}
 				
 				// adjust key and value of the new entry
-				splitEntry.rawKey = entry.key;
+				splitEntry.rawKey = entry.rawKey;
 				splitEntry.rawValue = value;
 				
 				// add token to this table

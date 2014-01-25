@@ -26,7 +26,6 @@ int main (int argc, const char *argv[])
 
         BOOL wantsPositionalParameters = YES;
         BOOL wantsDecodedUnicodeSequences = NO;
-        BOOL keyIncludesComments = NO;
         NSString *keyIncludesCommentsDelimiter = @"|";
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
@@ -104,10 +103,6 @@ int main (int argc, const char *argv[])
 
                 customMacroPrefix = [NSString stringWithUTF8String:argv[i]];
             }
-            else if (!strcmp("-keyIncludesComments", argv[i]))
-            {
-                keyIncludesComments = YES;
-            }
             else if (!strcmp("-keyIncludesCommentsDelimiter", argv[i]))
             {
                 i++;
@@ -184,7 +179,6 @@ int main (int argc, const char *argv[])
         aggregator.wantsPositionalParameters = wantsPositionalParameters;
         aggregator.inputEncoding = inputStringEncoding;
         aggregator.customMacroPrefix = customMacroPrefix;
-        aggregator.keyIncludesComments = keyIncludesComments;
         aggregator.tablesToSkip = tablesToSkip;
         aggregator.defaultTableName = defaultTableName;
 		
@@ -228,7 +222,6 @@ void showUsage(void)
     //   printf("    -j                       sets the input language to Java.\n");
     //   printf("    -a                       append output to the old strings files.\n");
     printf("    -s substring             substitute 'substring' for NSLocalizedString.\n");
-    printf("    -keyIncludesComments     use 'key|comment|comment...' for the key.\n");
     printf("    -skipTable tablename     skip over the file for 'tablename'.\n");
     printf("    -noPositionalParameters  turns off positional parameter support.\n");
     printf("    -u                       allow unicode characters in the values of strings files.\n");

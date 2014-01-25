@@ -18,7 +18,6 @@
 @synthesize rawValue=_rawValue;
 @synthesize tableName=_tableName;
 @synthesize bundle=_bundle;
-@synthesize keyIncludesComments=_keyIncludesComments;
 
 - (NSString *)description
 {
@@ -34,7 +33,10 @@
 		[tmpString appendFormat:@" table='%@'", _tableName];
 	}
 
-    [tmpString appendFormat:@" comment='%@'", _comment];
+    if (_context)
+    {
+        [tmpString appendFormat:@" context='%@'", _context];
+    }
 
 	[tmpString appendString:@">"];
 
@@ -49,7 +51,7 @@
 	newEntry.rawValue = _rawValue;
 	newEntry.tableName = _tableName;
 	newEntry.bundle = _bundle;
-    newEntry.comment = _comment;
+    newEntry.context = _context;
     
 	return newEntry;
 }
@@ -93,18 +95,11 @@
     }
 }
 
-- (void)setKeyIncludesComments:(BOOL)keyIncludesComments {
-  if (keyIncludesComments != _keyIncludesComments) {
-    _keyIncludesComments = keyIncludesComments;
-    _cleanedKey = nil;
-  }
-}
-
 - (NSString *)key
 {
-    if (_keyIncludesComments && _comment) {
+    if (_context) {
         NSString *trimmedKey = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-        return [NSString stringWithFormat:@"(%@)%@", _comment, trimmedKey];
+        return [NSString stringWithFormat:@"(%@)%@", _context, trimmedKey];
     } else {
         return _rawKey;
     }

@@ -384,7 +384,7 @@
                 if ([property isEqualToString:@"rawKey"]) {
                     entry.rawKey = value;
                 } else if ([property isEqualToString:@"comment"]) {
-                    [entry setComment:value];
+                    [entry setContext:value];
                 } else if ([property isEqualToString:@"tableName"]) {
                     entry.tableName = value;
                 } else if ([property isEqualToString:@"bundle"]) {
