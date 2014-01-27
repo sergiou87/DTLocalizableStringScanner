@@ -352,8 +352,8 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
         if (value)
         {
             DTLocalizableStringEntry *entry = [[DTLocalizableStringEntry alloc] init];
-            entry.rawKey = [_currentKey stringByReplacingSlashEscapes];
-            entry.rawValue = [value stringByReplacingSlashEscapes];
+            entry.rawKey = _currentKey;
+            entry.rawValue = value;
             entry.tableName = tableName;
             [table addEntry:entry];
             
