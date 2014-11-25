@@ -139,6 +139,7 @@ If you want to contribute to the project just follow this steps:
 ## Apps using SPLocalizedString and spgenstrings
 
 * [Fever](https://itunes.apple.com/us/app/fever-event-discovery-app/id497702817?mt=8)
+* [Fon Utility App](https://itunes.apple.com/us/app/utility-app/id737828006?mt=8)
 
 ## License
 
