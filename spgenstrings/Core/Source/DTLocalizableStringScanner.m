@@ -253,7 +253,7 @@
     return string;
 }
 
-- (NSString *)_scanParameter
+- (NSString *)_scanParameter:(BOOL *)isLiteral
 {
     // TODO: handle comments in parameters
     // eg: NSLocalizedString("Something", /* blah */ nil)
@@ -299,7 +299,16 @@
 
     if (quotedString)
     {
+        if (isLiteral)
+        {
+            *isLiteral = YES;
+        }
         return quotedString;
+    }
+
+    if (isLiteral)
+    {
+        *isLiteral = NO;
     }
 
     NSUInteger length = _currentIndex - parameterStartIndex;
@@ -316,6 +325,8 @@
     _currentIndex = range.location + range.length - _charactersRange.location;
 
     NSMutableArray *parameters = [[NSMutableArray alloc] initWithCapacity:3];
+    // Array to check whether a parameter is a string literal or not
+    NSMutableArray *stringLiterals = [[NSMutableArray alloc] initWithCapacity:[parameters count]];
 
     // skip any whitespace between here and the (
     [self _scanWhitespace];
@@ -331,13 +342,15 @@
             [self _scanWhitespace];
 
             // scan a parameter
-            NSString *parameter = [self _scanParameter];
+            BOOL isLiteral;
+            NSString *parameter = [self _scanParameter:&isLiteral];
 
             if (parameter)
             {
                 // we found one!
                 // single slash unicode sequences need to be decoded on reading
                 [parameters addObject:[parameter stringByDecodingUnicodeSequences]];
+                [stringLiterals addObject:[NSNumber numberWithBool:isLiteral]];
 
                 // skip any trailing whitespace
                 [self _scanWhitespace];
@@ -381,12 +394,22 @@
             {
                 NSString *property = [expectedParameters objectAtIndex:i];
                 NSString *value = [parameters objectAtIndex:i];
+                BOOL isLiteralString = [[stringLiterals objectAtIndex:i] boolValue];
 
                 if ([property isEqualToString:KEY]) {
+                    if (!isLiteralString) {
+                        [self _warnNoLiteralStrings];
+                    }
                     entry.rawKey = value;
                 } else if ([property isEqualToString:CONTEXT]) {
+                    if (!isLiteralString) {
+                        [self _warnNoLiteralStrings];
+                    }
                     [entry setContext:value];
                 } else if ([property isEqualToString:TABLE]) {
+                    if (!isLiteralString) {
+                        [self _warnNoLiteralStrings];
+                    }
                     entry.tableName = value;
                 } else if ([property isEqualToString:BUNDLE]) {
                     entry.bundle = value;
@@ -423,6 +446,35 @@
     }
 
     return NO;
+}
+
+- (void)_warnNoLiteralStrings
+{
+    NSUInteger line;
+    [self _getCurrentLine:&line];
+    NSLog(@"Bad entry in file %@ (line = %lu): Argument is not a literal string.", [[_url pathComponents] lastObject], (unsigned long)line);
+}
+
+- (void)_getCurrentLine:(NSUInteger *)line
+{
+
+    NSUInteger currentIndex = 0;
+    NSUInteger lineCounter = 1;
+
+    while(currentIndex<_currentIndex+_charactersRange.location)
+    {
+        if ([_charactersAsString characterAtIndex:currentIndex] == '\n')
+        {
+            lineCounter ++;
+        }
+
+        currentIndex ++;
+    }
+
+    if (line)
+    {
+        *line = lineCounter;
+    }
 }
 
 @end

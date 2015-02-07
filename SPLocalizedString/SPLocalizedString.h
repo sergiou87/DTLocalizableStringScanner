@@ -25,7 +25,7 @@
 #import <Foundation/Foundation.h>
 
 #define SPLocalizedStringWithDefaultValue(key, context, table, bundle, value) \
-SPLocalization_localizedString(@"(" context @")" key, context, table, bundle, value)
+SPLocalization_localizedString([NSString stringWithFormat:@"%@%@", @"(" context @")", key], context, table, bundle, value)
 
 #define SPLocalizedStringFromTableInBundle(key, context, table, bundle) \
 SPLocalizedStringWithDefaultValue(key, context, table, bundle, key)
@@ -43,7 +43,7 @@ NSString *SPLocalization_localizedString(NSString *key, NSString *context, NSStr
 
 
 #define SPLocalizedStringPluralWithDefaultValue(key, context, count, table, bundle, value) \
-SPLocalization_localizedStringPlural(@"(" context @"##one)" key, @"(" context @"##other)" key, context, count, table, bundle, value)
+SPLocalization_localizedStringPlural([NSString stringWithFormat:@"%@%@", @"(" context @"##one)", key], [NSString stringWithFormat:@"%@%@", @"(" context @"##other)", key], context, count, table, bundle, value)
 
 #define SPLocalizedStringPluralFromTableInBundle(key, context, count, table, bundle) \
 SPLocalizedStringPluralWithDefaultValue(key, context, count, table, bundle, key)
