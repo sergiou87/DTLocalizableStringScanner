@@ -42,6 +42,7 @@
 @synthesize customMacroPrefix = _customMacroPrefix;
 
 @synthesize defaultTableName = _defaultTableName;
+@synthesize rawKeyExpressions = _rawKeyExpressions;
 
 - (id)init
 {
@@ -117,7 +118,7 @@
 {
 	NSDictionary *validMacros = [self validMacros];
 	
-	DTLocalizableStringScanner *scanner = [[DTLocalizableStringScanner alloc] initWithContentsOfURL:fileURL encoding:_inputEncoding validMacros:validMacros];
+    DTLocalizableStringScanner *scanner = [[DTLocalizableStringScanner alloc] initWithContentsOfURL:fileURL encoding:_inputEncoding validMacros:validMacros rawKeyExpressions:_rawKeyExpressions];
 	
 	[scanner setEntryFoundCallback:^(DTLocalizableStringEntry *entry)
     {

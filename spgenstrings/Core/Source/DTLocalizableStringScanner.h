@@ -28,7 +28,7 @@ typedef void(^DTLocalizableStringEntryFoundCallback)(DTLocalizableStringEntry *)
  @param encoding The string encoding of the source file
  @param validMacros The macro prototypes that are considered valid
  */
-- (id)initWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)encoding validMacros:(NSDictionary *)validMacros;
+- (id)initWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)encoding validMacros:(NSDictionary *)validMacros rawKeyExpressions:(NSArray *)rawKeyExpressions;
 
 /**
  The callback to execute for each found macro.

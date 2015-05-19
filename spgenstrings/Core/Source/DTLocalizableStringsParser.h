@@ -22,8 +22,9 @@
 /**
  Instantiates a strings file parser
  @param url The file URL for the file to parse
+ @param rawKeyExpressions An array of regular expressions. Keys matching these expressions will be used as-is, rather than being prefixed with the context.
  */
-- (id)initWithFileURL:(NSURL *)url;
+- (id)initWithFileURL:(NSURL *)url rawKeyExpressions:(NSArray *)rawKeyExpressions;
 
 /**
  @name Parsing File Contents
