@@ -52,6 +52,7 @@
 	newEntry.tableName = _tableName;
 	newEntry.bundle = _bundle;
     newEntry.context = _context;
+    newEntry.useRawKey = _useRawKey;
     
 	return newEntry;
 }
@@ -97,7 +98,7 @@
 
 - (NSString *)key
 {
-    if (_context) {
+    if (_context && _useRawKey == NO) {
         NSString *trimmedKey = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
         return [NSString stringWithFormat:@"(%@)%@", _context, trimmedKey];
     } else {

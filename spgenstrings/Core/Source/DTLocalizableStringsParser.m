@@ -18,6 +18,7 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
 {
     NSURL *_URL;
     NSError *_parseError;
+    NSArray *_rawKeyExpressions;
     
     // lookup bitmask what delegate methods are implemented
 	struct
@@ -39,12 +40,13 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
     NSString *_currentKey;
 }
 
-- (id)initWithFileURL:(NSURL *)URL
+- (id)initWithFileURL:(NSURL *)URL rawKeyExpressions:(NSArray *)rawKeyExpressions
 {
     self = [super init];
     if (self)
     {
         _URL = URL;
+        _rawKeyExpressions = rawKeyExpressions;
     }
     return self;
 }
@@ -355,6 +357,16 @@ NSString * const DTLocalizableStringsParserErrorDomain = @"DTLocalizableStringsP
             entry.rawKey = _currentKey;
             entry.rawValue = value;
             entry.tableName = tableName;
+
+            for (NSRegularExpression *regex in _rawKeyExpressions)
+            {
+                if ([regex matchesInString:_currentKey options:0 range:NSMakeRange(0, _currentKey.length)].count)
+                {
+                    entry.useRawKey = YES;
+                    break;
+                }
+            }
+
             [table addEntry:entry];
             
             _currentKey = nil;

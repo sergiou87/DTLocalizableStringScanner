@@ -40,6 +40,7 @@ int main (int argc, const char *argv[])
         NSUInteger i = 1;
         NSMutableArray *files = [NSMutableArray array];
         NSStringEncoding inputStringEncoding = NSUTF8StringEncoding;
+        NSMutableArray *rawKeyExpressions = [NSMutableArray array];
 
         while (i<argc)
         {
@@ -163,6 +164,32 @@ int main (int argc, const char *argv[])
                 
                 defaultTableName = [NSString stringWithUTF8String:argv[i]];
             }
+            else if (!strcmp("-rawKey", argv[i]))
+            {
+                // no context for keys matching regex
+                i++;
+
+                if (i>=argc)
+                {
+                    // regex is missing
+                    optionsInvalid = YES;
+                    break;
+                }
+
+                // regex
+                NSString *regexString = [NSString stringWithUTF8String:argv[i]];
+                NSError *err = nil;
+                NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:regexString options:0 error:&err];
+
+                if (err)
+                {
+                    printf("Error parsing regular expression: %s", [[err description] UTF8String]);
+                    optionsInvalid = YES;
+                    break;
+                }
+
+                [rawKeyExpressions addObject:regex];
+            }
             
             i++;
         }
@@ -184,10 +211,11 @@ int main (int argc, const char *argv[])
         // Parse existing files
         NSArray *stringsFiles = stringsFilesInDirectory(outputFolderURL);
         NSMutableDictionary *originalTables = [NSMutableDictionary dictionary];
+        NSArray *expressions = [rawKeyExpressions copy];
         
         for (NSURL *file in stringsFiles)
         {
-            DTLocalizableStringsParser *parser = [[DTLocalizableStringsParser alloc] initWithFileURL:file];
+            DTLocalizableStringsParser *parser = [[DTLocalizableStringsParser alloc] initWithFileURL:file rawKeyExpressions:expressions];
             DTLocalizableStringTable *table = [parser parse];
             
             if (!table)
@@ -208,6 +236,7 @@ int main (int argc, const char *argv[])
         aggregator.customMacroPrefix = customMacroPrefix;
         aggregator.tablesToSkip = tablesToSkip;
         aggregator.defaultTableName = defaultTableName;
+        aggregator.rawKeyExpressions = expressions;
 
         // go, go, go!
         for (NSURL *file in files) {
@@ -288,6 +317,7 @@ void showUsage(void)
     printf("    -utf8                    output generated as UTF-8 not UTF-16.\n");
     printf("    -o dir                   place output files in 'dir'.\n\n");
     printf("    -defaultTable tablename  use 'tablename' instead of 'Localizable' as default table name.\n");
+    printf("    -rawKey regex            write keys matching the given regular expression without context information.\n");
 }
 
 

@@ -47,6 +47,8 @@
  */
 @property (nonatomic, retain) NSString *defaultTableName;
 
+@property (nonatomic, retain) NSArray *rawKeyExpressions;
+
 /**
  @name Scanning Files
  */

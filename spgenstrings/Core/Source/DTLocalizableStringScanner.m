@@ -22,6 +22,7 @@
     NSURL *_url;
     NSDictionary *_validMacros;
     NSRegularExpression *_validMacroRegex;
+    NSArray *_rawKeyExpressions;
 
     unichar *_characters;
     NSString *_charactersAsString;
@@ -147,7 +148,7 @@
     }
 }
 
-- (id)initWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)encoding validMacros:(NSDictionary *)validMacros
+- (id)initWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)encoding validMacros:(NSDictionary *)validMacros rawKeyExpressions:(NSArray *)rawKeyExpressions
 {
     self = [super init];
 
@@ -166,6 +167,8 @@
 
         _validMacros = validMacros;
         _validMacroRegex = [self regularExpressionWithValidMacros:validMacros];
+
+        _rawKeyExpressions = rawKeyExpressions;
     }
 
     return self;
@@ -401,6 +404,16 @@
                         [self _warnNoLiteralStrings];
                     }
                     entry.rawKey = value;
+
+                    for (NSRegularExpression *regex in _rawKeyExpressions)
+                    {
+                        if ([regex matchesInString:value options:0 range:NSMakeRange(0, value.length)].count)
+                        {
+                            entry.useRawKey = YES;
+                            break;
+                        }
+                    }
+
                 } else if ([property isEqualToString:CONTEXT]) {
                     if (!isLiteralString) {
                         [self _warnNoLiteralStrings];

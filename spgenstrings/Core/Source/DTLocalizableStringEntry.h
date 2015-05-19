@@ -54,6 +54,8 @@
 
 @property (nonatomic, copy) NSString *context;
 
+@property (nonatomic) BOOL useRawKey;
+
 /**
  @name Sorting Entries
  */
