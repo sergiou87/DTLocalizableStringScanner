@@ -25,7 +25,7 @@
 #import <Foundation/Foundation.h>
 
 #define SPLocalizedStringWithDefaultValue(key, context, table, bundle, value) \
-SPLocalization_localizedString([NSString stringWithFormat:@"%@%@", @"(" context @")", key], context, table, bundle, value)
+SPLocalization_localizedString([NSString stringWithFormat:@"(%@)%@", context, key], context, table, bundle, value)
 
 #define SPLocalizedStringFromTableInBundle(key, context, table, bundle) \
 SPLocalizedStringWithDefaultValue(key, context, table, bundle, key)
