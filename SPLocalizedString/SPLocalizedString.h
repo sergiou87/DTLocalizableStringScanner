@@ -43,7 +43,7 @@ NSString *SPLocalization_localizedString(NSString *key, NSString *context, NSStr
 
 
 #define SPLocalizedStringPluralWithDefaultValue(key, context, count, table, bundle, value) \
-SPLocalization_localizedStringPlural([NSString stringWithFormat:@"%@%@", @"(" context @"##one)", key], [NSString stringWithFormat:@"%@%@", @"(" context @"##other)", key], context, count, table, bundle, value)
+SPLocalization_localizedStringPlural([NSString stringWithFormat:@"(%@##one)%@", context, key], [NSString stringWithFormat:@"(%@##other)%@", context, key], context, count, table, bundle, value)
 
 #define SPLocalizedStringPluralFromTableInBundle(key, context, count, table, bundle) \
 SPLocalizedStringPluralWithDefaultValue(key, context, count, table, bundle, key)
