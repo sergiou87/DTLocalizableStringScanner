@@ -103,7 +103,7 @@
 
 	for (DTLocalizableStringEntry *entry in sortedEntries)
 	{
-		NSString *key = [entry key];
+		NSString *key = [entry rawKey];
 		NSString *value = [entry rawValue];
 
         if (entryWriteCallback)
@@ -114,7 +114,7 @@
         if (_shouldDecodeUnicodeSequences)
 		{
 			// strip the quotes
-			if ([value hasPrefix:@"\""] && [value hasPrefix:@"\""])
+			if ([value hasPrefix:@"\""] && [value hasSuffix:@"\""])
 			{
 				value = [value substringWithRange:NSMakeRange(1, [value length]-2)];
 			}
