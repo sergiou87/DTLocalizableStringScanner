@@ -140,9 +140,11 @@ If you want to contribute to the project just follow this steps:
 
 * [Fever](https://itunes.apple.com/us/app/fever-event-discovery-app/id497702817?mt=8)
 * [Fon Utility App](https://itunes.apple.com/us/app/utility-app/id737828006?mt=8)
+* [Plex](https://itunes.apple.com/en/app/plex/id383457673?mt=8)
 
 ## Contributions
 * [Daniel Martín](http://github.com/danielmartin): Add support for non-literal strings ([#2](https://github.com/sergiou87/SPLocalizedString/pull/2)).
+* [James Clarke](http://github.com/jam): Allow opting out of the context-prefixing behaviour ([#3](https://github.com/sergiou87/SPLocalizedString/pull/3)).
 
 ## License
 
