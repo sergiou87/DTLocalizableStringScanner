@@ -37,10 +37,11 @@
 
     NSLog(@"%@", SPLocalizedString(@"Hello world!", @"First hello world"));
     NSLog(@"%@", SPLocalizedString(@"Hello world!", @"Second hello world"));
+    NSLog(@"%@", SPLocalizedString(@"Hello \"%@\"", @"Hello world with name"), @"Sergio");
     NSLog(@"%@", SPLocalizedStringFromTable(@"Hello world!", @"Another text from another table", @"OtherTable"));
     NSLog(@"%@", SPLocalizedStringFromTable(variableTable, @"Another variable text from another table", @"OtherTable"));
     NSLog(@"%@", SPLocalizedString(variable, @"Context for variable string"));
-    
+
     for (NSUInteger count = 1; count < 5; count ++)
     {
         NSString *formatString = SPLocalizedStringPlural(@"%d people is following you", @"Followers label description", count);

@@ -99,8 +99,7 @@
 - (NSString *)key
 {
     if (_context && _useRawKey == NO) {
-        NSString *trimmedKey = [_rawKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-        return [NSString stringWithFormat:@"(%@)%@", _context, trimmedKey];
+        return [NSString stringWithFormat:@"(%@)%@", _context, _rawKey];
     } else {
         return _rawKey;
     }
